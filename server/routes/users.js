@@ -1,6 +1,8 @@
 const express = require('express');
 const User = require('../models/User');
 
+const debug = require('debug')('chat:routes:users');
+
 const router = express.Router();
 
 router.put('/:id', async (req, res, next) => {

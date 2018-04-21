@@ -1,5 +1,18 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div(class="flex-row")
+    div(class="content flex-main")
+      div(class="flex-main")
+        h1 MarkupAndChat
+        h2 Free, private rooms to chat over images and mark them up
+        h3 Features
+          p Create a private room with a shareable link
+          p Upload an image to your room
+          p Use the chatbox to discuss your image
+          p Use the drawing tools to collaborate with your team
+          p Once you're finished, save the results to a new image that contains all messages and markup
+    div(class="flex-row align-center justify-center flex-main")
+      form(action="/rooms" method="post")
+        button(type="submit") CREATE A ROOM
+
