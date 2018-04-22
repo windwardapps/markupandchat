@@ -1,18 +1,25 @@
 .App {
   height: 100vh;
 }
-
 .App-header {
   background-color: #222;
   height: 60px;
   padding: 0 20px;
-  color: white;
+  color: #f5f5f5;
 }
-
 .App-header .logo {
   margin-right: 25px;
 }
-
-.chat {
-  width: 400px;
+.App .username-wrapper {
+  margin-left: 25px;
+}
+.App .username {
+  transition: all 100ms ease-in-out;
+  cursor: pointer;
+}
+.App .username:hover {
+  color: #fff;
+}
+.App .username-wrapper input {
+  width: 250px;
 }

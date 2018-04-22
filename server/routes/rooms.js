@@ -19,6 +19,7 @@ router.get('/:id', async (req, res, next) => {
 
     const user = await getOrCreateUser(req, res);
     const users = await User.findAll();
+    await RoomUser.getOrCreate(room.id, user.id);
     const roomUsers = await RoomUser.findAll({ where: { roomId: room.id } });
     const messages = await Message.findAll({ where: { roomId: room.id } });
 

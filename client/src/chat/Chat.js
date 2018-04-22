@@ -33,7 +33,9 @@ class Chat extends Component {
             <li key={m.id} className="flex-col">
               <div className="text">{m.text}</div>
               <div className="info flex-row spc-between">
-                <span>{users.find(u => u.id === m.createdBy).name}</span>
+                <span>
+                  {(users.find(u => u.id === m.createdBy) || {}).name}
+                </span>
                 <span>{moment(m.createdAt).fromNow()}</span>
               </div>
             </li>
@@ -42,6 +44,7 @@ class Chat extends Component {
         <div className="flex-row">
           <input
             className="flex-main"
+            placeholder="Send a message..."
             value={value}
             onChange={e => this.setState({ value: e.target.value })}
           />

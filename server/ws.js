@@ -13,16 +13,7 @@ async function onJoinRoom(socket, data) {
   socket.join(roomId);
   socketRoomMap[socket.id] = roomId;
 
-  const roomUser = await RoomUser.findAll({
-    where: {
-      roomId,
-      userId
-    }
-  });
-
-  if (!roomUser) {
-    RoomUser.create({ roomId, userId });
-  }
+  await RoomUser.getOrCreate(roomId, userId);
 }
 
 async function onChatMessage(socket, data) {

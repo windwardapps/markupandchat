@@ -6,11 +6,11 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+  color: #00b7ff;
 }
 
 .flex-row {
@@ -41,4 +41,14 @@ a {
 
 .content {
   padding: 40px;
+}
+
+button,
+input {
+  appearance: none;
+  border: 1px solid #eee;
+  background: #fff;
+  padding: 9px 12px;
+  font-family: sans-serif;
+  font-size: 12px;
 }
