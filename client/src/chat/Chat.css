@@ -1,0 +1,37 @@
+.Chat {
+  flex: 0 0 350px;
+  background: #fcfcfc;
+}
+.Chat * {
+  margin: 0;
+  padding: 0;
+}
+.Chat ul {
+  list-style: none;
+  padding: 15px;
+  overflow-y: auto;
+}
+.Chat li {
+  padding: 12px;
+  background: #eef;
+  border-radius: 5px;
+}
+.Chat li + li {
+  margin-top: 15px;
+}
+.Chat .info {
+  font-size: 80%;
+  color: #aaa;
+  margin-top: 10px;
+}
+.Chat button,
+.Chat input {
+  appearance: none;
+  border: 1px solid #eee;
+  background: #fff;
+  padding: 9px 12px;
+  font-family: sans-serif;
+}
+.Chat button {
+  border-left: none;
+}

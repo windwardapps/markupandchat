@@ -1,6 +1,7 @@
 const express = require('express');
 const uuid = require('uuid/v4');
 const User = require('../models/User')
+const getOrCreateUser = require('./shared').getOrCreateUser;
 
 const debug = require('debug')('chat:routes:index');
 
@@ -13,21 +14,9 @@ const in100years = () => {
 }
 
 router.get('/', async (req, res, next) => {
-  if (!req.cookies.markup_id) {
-    const id = uuid();
-    debug(`Creating user with id ${id}`);
-    const user = await User.create({
-      id: id,
-      name: `awesome-user-${id}`
-    });
-    res.cookie('markup_id', user.id, {
-      expires: in100years()
-    });
-  }
+  await getOrCreateUser(req, res);
 
-  res.render('index', {
-    title: 'Express'
-  });
+  res.render('index');
 });
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
-const db = require('./db');
+const db = require('../db/db');
 
-const Room = db.define('user', {
+const Room = db.define('room', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,

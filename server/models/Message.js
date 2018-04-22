@@ -1,18 +1,21 @@
 const Sequelize = require('sequelize');
 const db = require('../db/db');
 
-const User = db.define('user', {
+const Message = db.define('message', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,
     default: Sequelize.UUIDV4
   },
-  name: {
+  roomId: {
+    type: Sequelize.UUID
+  },
+  text: {
     type: Sequelize.STRING
   },
-  email: {
-    type: Sequelize.STRING
+  createdBy: {
+    type: Sequelize.UUID
   }
 });
 
-module.exports = User;
+module.exports = Message;

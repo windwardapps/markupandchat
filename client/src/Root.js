@@ -1,21 +1,21 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import App from './app/App';
 import Home from './home/Home';
+
 import './Root.css';
 
 class Root extends Component {
 
-  state = {
-    room: null
-  }
-
-  onCreateRoomClick = () => {
-    this.setState({ room: new Room() })
-  }
-
   render() {
-    const { room } = this.state;
-    return room ? <App room={room} /> : <Home onCreateRoomClick={this.onCreateRoomClick} />
+    return (
+      <Router>
+        <div>
+          <Route exact path="/" component={Home} />
+          <Route path="/rooms/:id" component={App} />
+        </div>
+      </Router>
+    )
   }
 }
 
