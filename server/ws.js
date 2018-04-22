@@ -1,7 +1,9 @@
 const io = require('socket.io');
 const http = require('http');
 const uuid = require('uuid/v4');
+const Sequelize = require('sequelize');
 const Message = require('./models/Message');
+const User = require('./models/User');
 const RoomUser = require('./models/RoomUser');
 
 let wsServer;
@@ -36,8 +38,28 @@ function onUpdateShape(socket, data) {
   debugger;
 }
 
-exports.emit = function emit(room, eventName, data) {
+function emit(room, eventName, data) {
   wsServer.to(room).emit(eventName, data);
+}
+
+exports.emit = emit;
+
+exports.updateRoomUsers = async function updateRoomUsers(roomId) {
+  const roomUsers = await RoomUser.findAll({
+    where: {
+      roomId
+    }
+  });
+
+  const users = await User.findAll({
+    where: {
+      id: {
+        [Sequelize.Op.in]: roomUsers.map(ru => ru.userId)
+      }
+    }
+  });
+
+  emit(roomId, 'updateusers', users);
 };
 
 exports.createWebsocketServer = function createWebsocketServer(app) {

@@ -1,0 +1,21 @@
+.Svg {
+  flex: 1 1 100%;
+  overflow: hidden;
+  max-width: calc(100vw - 350px);
+}
+.Svg .scroll-node {
+  overflow: auto;
+  width: 100%;
+  height: 100%;
+}
+.Svg .img-wrapper {
+  position: absolute;
+}
+.Svg img,
+.Svg svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

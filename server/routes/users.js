@@ -24,17 +24,7 @@ router.put('/:id', async (req, res, next) => {
   res.send(user);
 
   if (req.body.roomId) {
-    const roomUsers = await RoomUser.findAll({
-      where: {
-        roomId
-      }
-    });
-
-    const users = await User.findAll({
-      where: { id: { [Sequelize.Op.in]: roomUsers.map(ru => ru.userId) } }
-    });
-
-    require('../ws').emit(req.body.roomId, 'updateusers', users);
+    require('../ws').updateRoomUsers(req.body.roomId);
   }
 });
 

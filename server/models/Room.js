@@ -10,6 +10,9 @@ const Room = db.define('room', {
   name: {
     type: Sequelize.STRING
   },
+  imageSrc: {
+    type: Sequelize.STRING
+  },
   createdBy: {
     type: Sequelize.UUID
   }

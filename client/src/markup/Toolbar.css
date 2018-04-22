@@ -1,0 +1,10 @@
+.Toolbar {
+  background: #333;
+  padding: 10px;
+}
+.Toolbar button + button {
+  margin-top: 10px;
+}
+.Toolbar select {
+  margin-top: 10px;
+}

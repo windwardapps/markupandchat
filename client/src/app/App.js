@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
 import Chat from '../chat/Chat';
+import Markup from '../markup/Markup';
 
 import './App.css';
 
@@ -54,6 +55,13 @@ class App extends Component {
     });
   };
 
+  onUploadImageClick = async file => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const res = await axios.put(`/api/rooms/${this.state.room.id}`, formData);
+    this.setState({ room: res.data });
+  };
+
   updateUser = async () => {
     const { user, name } = this.state;
     if (!name.trim()) {
@@ -64,6 +72,7 @@ class App extends Component {
       name,
       roomId: this.state.room.id
     });
+
     this.setState({ isEditing: false, name: '', user: res.data });
   };
 
@@ -102,7 +111,12 @@ class App extends Component {
             users={users}
             onCreateMessageClick={this.onCreateMessageClick}
           />
-          <div className="flex-main">Markup</div>
+          <Markup
+            room={room}
+            user={user}
+            users={users}
+            onUploadImageClick={this.onUploadImageClick}
+          />
         </div>
       </div>
     );
