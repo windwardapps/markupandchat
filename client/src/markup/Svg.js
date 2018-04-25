@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 
 import './Svg.css';
 
@@ -62,6 +63,52 @@ class Svg extends Component {
     this.props.onScaleChange(scale, true);
   };
 
+  onMouseDown = (e) => {
+    if (!_.includes(['img', 'svg'], e.target.nodeName.toLowerCase())) {
+      return;
+    }
+
+    e.preventDefault();
+    this._isDragging = true;
+    this._didDrag = false;
+    this._lastX = e.clientX;
+    this._lastY = e.clientY;
+  }
+
+  onMouseMove = (e) => {
+    if (!_.includes(['img', 'svg'], e.target.nodeName.toLowerCase()) || !this._isDragging) {
+      return;
+    }
+
+    const diffX = e.clientX - this._lastX;
+    const diffY = e.clientY - this._lastY;
+
+    if (!(diffX || diffY)) {
+      return;
+    }
+
+    this._didDrag = true;
+    this._scrollNode.scrollLeft -= diffX;
+    this._scrollNode.scrollTop -= diffY;
+
+    this._lastX = e.clientX;
+    this._lastY = e.clientY;
+  }
+
+  onMouseUp = () => {
+    if (!this._isDragging) {
+      return;
+    }
+
+    this._isDragging = false;
+
+    if (this._didDrag) {
+      this._didDrag = false;
+      this._ignoreClickEvent = true;
+      setTimeout(() => this._ignoreClickEvent = false, 100);
+    }
+  }
+
   getPosition = () => {
     if (!this._node) {
       return {};
@@ -87,7 +134,7 @@ class Svg extends Component {
 
     return (
       <div ref={node => (this._node = node)} className="Svg">
-        <div className="scroll-node" ref={node => (this._scrollNode = node)}>
+        <div className="scroll-node" ref={node => (this._scrollNode = node)} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}>
           <div className="img-wrapper" style={this.getPosition()}>
             <img
               ref={node => (this._img = node)}

@@ -7,6 +7,9 @@
   height: 100%;
   transform: scale(1);
 }
+.Svg .scroll-node:active {
+  cursor: move;
+}
 .Svg .img-wrapper {
   position: absolute;
 }
