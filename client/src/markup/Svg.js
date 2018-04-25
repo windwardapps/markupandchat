@@ -5,8 +5,38 @@ import './Svg.css';
 class Svg extends Component {
   state = {
     naturalWidth: 0,
-    naturalHeight: 0
+    naturalHeight: 0,
+    center: {
+      x: 0,
+      y: 0,
+      scrollWidth: 0,
+      scrollHeight: 0
+    }
   };
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.scale !== this.props.scale) {
+      const { scrollTop, scrollLeft, scrollWidth, scrollHeight, clientWidth, clientHeight } = this._scrollNode;
+
+      const center = {
+        x: scrollLeft + clientWidth / 2,
+        y: scrollTop + clientHeight / 2,
+        scrollWidth,
+        scrollHeight
+      };
+
+      this.setState({ center });
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { center } = this.state;
+    if (center !== prevState.center && this._scrollNode) {
+      const { clientWidth, clientHeight, scrollWidth, scrollHeight } = this._scrollNode;
+      this._scrollNode.scrollLeft = center.x / center.scrollWidth * scrollWidth - clientWidth / 2;
+      this._scrollNode.scrollTop = center.y / center.scrollHeight * scrollHeight - clientHeight / 2;
+    }
+  }
 
   onLoad = () => {
     if (!(this._node && this._img)) {
@@ -57,7 +87,7 @@ class Svg extends Component {
 
     return (
       <div ref={node => (this._node = node)} className="Svg">
-        <div className="scroll-node">
+        <div className="scroll-node" ref={node => (this._scrollNode = node)}>
           <div className="img-wrapper" style={this.getPosition()}>
             <img
               ref={node => (this._img = node)}

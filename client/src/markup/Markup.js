@@ -6,20 +6,19 @@ import './Markup.css';
 
 class Markup extends Component {
   state = {
-    file: null,
     scale: 1,
     initialScale: 1
   };
 
   onFileChange = e => {
-    this.setState({ file: e.target.files[0] });
-  };
-
-  onUploadImageClick = () => {
-    const { file } = this.state;
+    const file = e.target.files[0];
     if (file) {
       this.props.onUploadImageClick(file);
     }
+  };
+
+  onUploadImageClick = () => {
+    this._fileInput.click();
   };
 
   onScaleChange = (scale, initial = false) => {
@@ -33,7 +32,7 @@ class Markup extends Component {
 
   render() {
     const { room, user, users } = this.props;
-    const { file, scale, initialScale } = this.state;
+    const { scale, initialScale } = this.state;
     return (
       <div className="Markup flex-row">
         {room.imageSrc ? (
@@ -47,9 +46,9 @@ class Markup extends Component {
             <Svg room={room} scale={scale} onScaleChange={this.onScaleChange} />
           </div>
         ) : (
-          <div>
-            <input type="file" onChange={this.onFileChange} />
-            <button onClick={this.onUploadImageClick}>UPLOAD</button>
+          <div className="flex-main flex-row align-center justify-center">
+            <input ref={node => this._fileInput = node} type="file" onChange={this.onFileChange} />
+            <button onClick={this.onUploadImageClick}>UPLOAD A FILE TO GET STARTED</button>
           </div>
         )}
       </div>

@@ -2,3 +2,9 @@
   flex: 1 1 100%;
   background: #000;
 }
+
+.Markup input[type="file"] {
+  position: fixed;
+  top: -1000px;
+  left: -1000px;
+}
