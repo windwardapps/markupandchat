@@ -3,7 +3,7 @@
 }
 .App-header {
   background-color: #222;
-  height: 60px;
+  flex: 0 0 55px;
   padding: 0 20px;
   color: #f5f5f5;
 }

@@ -1,12 +1,11 @@
 .Svg {
   flex: 1 1 100%;
-  overflow: hidden;
-  max-width: calc(100vw - 350px);
 }
 .Svg .scroll-node {
   overflow: auto;
   width: 100%;
   height: 100%;
+  transform: scale(1);
 }
 .Svg .img-wrapper {
   position: absolute;
