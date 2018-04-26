@@ -123,4 +123,22 @@ router.post('/:id/result', async (req, res, next) => {
   }
 });
 
+router.get('/:id/result', async (req, res, next) => {
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) {
+      return res.sendStatus(404);
+    }
+
+    if (!room.resultImageSrc) {
+      return res.sendStatus(400);
+    }
+
+    const path = `${__dirname}/../uploads/${room.resultImageSrc}`;
+    res.download(path);
+  } catch (err) {
+    return res.sendStatus(500);
+  }
+});
+
 module.exports = router;
