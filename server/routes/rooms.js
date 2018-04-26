@@ -113,7 +113,7 @@ router.post('/:id/result', async (req, res, next) => {
         }
 
         room.resultImageSrc = fileName;
-        room.finishedDate = new Date();
+        room.endDate = new Date();
         await room.save();
         return res.json(room);
       });

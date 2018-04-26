@@ -8,6 +8,7 @@ import Chat from '../chat/Chat';
 import Markup from '../markup/Markup';
 import store from '../store';
 import { SketchPicker } from 'react-color';
+import Dialog from '../dialog/Dialog';
 
 import './App.css';
 
@@ -24,7 +25,8 @@ class App extends Component {
     isEditing: false,
     color: initialColor,
     showPicker: false,
-    pickerStyle: {}
+    pickerStyle: {},
+    dialogMessage: null
   };
 
   async componentDidMount() {
@@ -163,7 +165,9 @@ class App extends Component {
   };
 
   onDoneClick = () => {
+    this.setState({ dialogMessage: 'Saving... Please wait...' });
     this._markupRef.setState({ scale: 1 });
+    this._markupRef._svgRef.setState({ activeId: null });
     setTimeout(async () => {
       const svg = document.querySelector('.Svg svg');
       const img = document.querySelector('.Svg img');
@@ -192,10 +196,12 @@ class App extends Component {
       const blob = new Blob([svgString], { type: 'image/svg+xml' });
       const formData = new FormData();
       formData.append('image', blob);
-      const res1 = await axios.post(
+      const res = await axios.post(
         `/api/rooms/${this.state.room.id}/result`,
         formData
       );
+
+      this.setState({ room: res.data });
 
       const iframe = document.createElement('iframe');
       const hostname =
@@ -203,6 +209,13 @@ class App extends Component {
       iframe.style.display = 'none';
       iframe.src = `${hostname}/api/rooms/${this.state.room.id}/result`;
       document.body.appendChild(iframe);
+
+      setTimeout(
+        () => this.setState({ dialogMessage: 'Your download is complete' }),
+        500
+      );
+
+      setTimeout(() => this.setState({ dialogMessage: null }), 1500);
     }, 250);
   };
 
@@ -217,8 +230,10 @@ class App extends Component {
       name,
       color,
       showPicker,
-      pickerStyle
+      pickerStyle,
+      dialogMessage
     } = this.state;
+
     return (
       <div className="App flex-col" onClick={this.onClick}>
         <header className="App-header flex-row align-center">
@@ -272,25 +287,33 @@ class App extends Component {
             </button>
           </div>
         </header>
-        <div className="flex-row flex-main">
-          <Chat
-            messages={messages}
-            users={users}
-            onCreateMessageClick={this.onCreateMessageClick}
-          />
-          <Markup
-            ref={ref => (this._markupRef = ref)}
-            room={room}
-            shapes={shapes}
-            user={user}
-            users={users}
-            color={color}
-            onUploadImageClick={this.onUploadImageClick}
-            onCreateShape={this.onCreateShape}
-            onUpdateShape={this.onUpdateShape}
-            onDeleteShape={this.onDeleteShape}
-          />
-        </div>
+        {room.endDate ? (
+          <div className="flex-row flex-main align-center justify-center">
+            Thanks for using MarkupAndChat! Your session has ended. Feel free to
+            create another room.
+          </div>
+        ) : (
+          <div className="flex-row flex-main">
+            <Chat
+              messages={messages}
+              users={users}
+              onCreateMessageClick={this.onCreateMessageClick}
+            />
+            <Markup
+              ref={ref => (this._markupRef = ref)}
+              room={room}
+              shapes={shapes}
+              user={user}
+              users={users}
+              color={color}
+              onUploadImageClick={this.onUploadImageClick}
+              onCreateShape={this.onCreateShape}
+              onUpdateShape={this.onUpdateShape}
+              onDeleteShape={this.onDeleteShape}
+            />
+          </div>
+        )}
+        {dialogMessage ? <Dialog>{dialogMessage}</Dialog> : null}
       </div>
     );
   }

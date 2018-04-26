@@ -16,7 +16,7 @@ const Room = db.define('room', {
   resultImageSrc: {
     type: Sequelize.STRING
   },
-  finishedDate: {
+  endDate: {
     type: Sequelize.DATE
   },
   createdBy: {
