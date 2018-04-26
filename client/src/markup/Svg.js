@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
+import Rect from '../svg/Rect';
+import Ellipse from '../svg/Ellipse';
+import Path, {scalePath} from '../svg/Path';
+import store from '../store';
 
 import './Svg.css';
+
+const shapeComponents = {
+  rect: Rect,
+  ellipse: Ellipse,
+};
+
+const SCALEABLE_ATTRS = {
+  ellipse: ['cx', 'cy', 'rx', 'ry', 'strokeWidth'],
+  rect: ['x', 'y', 'width', 'height', 'strokeWidth'],
+  path: [['d', scalePath], 'strokeWidth'],
+  line: ['x1', 'y1', 'x2', 'y2', 'width', 'height', 'strokeWidth'],
+  text: ['x', 'y', 'width', 'height', 'fontSize', 'strokeWidth']
+};
 
 class Svg extends Component {
   state = {
     naturalWidth: 0,
     naturalHeight: 0,
+    activeId: null,
     center: {
       x: 0,
       y: 0,
@@ -14,6 +32,11 @@ class Svg extends Component {
       scrollHeight: 0
     }
   };
+
+  componentDidMount() {
+    window.addEventListener('resize', this.onLoad);
+    window.addEventListener('keydown', this.onKeyDown);
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.scale !== this.props.scale) {
@@ -39,6 +62,11 @@ class Svg extends Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onLoad);
+    window.removeEventListener('keydown', this.onKeyDown);
+  }
+
   onLoad = () => {
     if (!(this._node && this._img)) {
       return setTimeout(this.onLoad, 500);
@@ -62,6 +90,18 @@ class Svg extends Component {
 
     this.props.onScaleChange(scale, true);
   };
+
+  onKeyDown = (e) => {
+    if (this.state.activeId && e.keyCode === 8 && !_.includes(['input, select, button'], document.activeElement.nodeName.toLowerCase())) {
+      this.props.onDeleteShape(this.state.activeId);
+    }
+  }
+
+  onClick = () => {
+    if (this.state.activeId && !this._ignoreClickEvent) {
+      this.setState({ activeId: null });
+    }
+  }
 
   onMouseDown = (e) => {
     if (!_.includes(['img', 'svg'], e.target.nodeName.toLowerCase())) {
@@ -129,11 +169,69 @@ class Svg extends Component {
     };
   };
 
+  scaleShape = (shape, addScale=true) => {
+    const { scale } = this.props;
+    if (scale === 1) {
+      return shape.data;
+    }
+
+    let scaledData = _.clone(shape.data);
+
+    const attrs = SCALEABLE_ATTRS[shape.type];
+    attrs.forEach(attr => {
+      if (Array.isArray(attr)) {
+        const [ subAttr, scaleFn ] = attr;
+        scaledData[subAttr] = scaleFn(scaledData[subAttr], scale, addScale);
+      } else {
+        if (addScale) {
+          scaledData[attr] *= scale;
+        } else {
+          scaledData[attr] /= scale;
+        }
+      }
+    });
+
+    return scaledData;
+  }
+
+  setActiveShapeId = (activeId) => {
+    this.setState({ activeId });
+  }
+
+  onUpdateShape = (shape, data) => {
+    this._ignoreClickEvent = true;
+    setTimeout(() => this._ignoreClickEvent = false, 250);
+
+    const updatedShape = _.cloneDeep(shape);
+    updatedShape.data = data;
+    updatedShape.data = this.scaleShape(updatedShape, false);
+    this.props.onUpdateShape(updatedShape);
+  }
+
+  renderShape = (shape) => {
+    const { room, onUpdateShape } = this.props;
+    const { activeId } = this.state;
+    const { id, type, data } = shape;
+    const Component = shapeComponents[type];
+
+    const scaledData = {}
+    return (
+      <Component
+        key={id}
+        data={this.scaleShape(shape)}
+        canEdit={shape.createdBy === store.userId || room.createdBy === store.userId}
+        isActive={id === activeId}
+        svgNode={this._svgNode}
+        onUpdateShape={data => this.onUpdateShape(shape, data)}
+        setActiveShapeId={() => this.setState({ activeId: id })} />
+    )
+  }
+
   render() {
-    const { room } = this.props;
+    const { room, shapes } = this.props;
 
     return (
-      <div ref={node => (this._node = node)} className="Svg">
+      <div ref={node => (this._node = node)} className="Svg" onClick={this.onClick}>
         <div className="scroll-node" ref={node => (this._scrollNode = node)} onMouseDown={this.onMouseDown} onMouseMove={this.onMouseMove} onMouseUp={this.onMouseUp}>
           <div className="img-wrapper" style={this.getPosition()}>
             <img
@@ -141,10 +239,8 @@ class Svg extends Component {
               src={`/${room.imageSrc}`}
               onLoad={this.onLoad}
             />
-            <svg width="100%" height="100%">
-              {(room.shapes || []).map(({ type, id, ...props }) => (
-                <type key={id} {...props} />
-              ))}
+            <svg width="100%" height="100%" ref={node => this._svgNode = node}>
+              {shapes.map(this.renderShape)}
             </svg>
           </div>
         </div>

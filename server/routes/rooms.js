@@ -6,6 +6,7 @@ const User = require('../models/User');
 const Room = require('../models/Room');
 const RoomUser = require('../models/RoomUser');
 const Message = require('../models/Message');
+const Shape = require('../models/Shape');
 const getOrCreateUser = require('./shared').getOrCreateUser;
 
 const debug = require('debug')('chat:routes:rooms');
@@ -24,11 +25,13 @@ router.get('/:id', async (req, res, next) => {
     await RoomUser.getOrCreate(room.id, user.id);
     const roomUsers = await RoomUser.findAll({ where: { roomId: room.id } });
     const messages = await Message.findAll({ where: { roomId: room.id } });
+    const shapes = await Shape.findAll({ where: { roomId: room.id } });
 
     return res.json({
       room,
       user,
       messages,
+      shapes,
       users: users.filter(u => !!roomUsers.find(ru => ru.userId === u.id))
     });
   } catch (err) {
@@ -80,6 +83,41 @@ router.post('/', async (req, res, next) => {
     });
 
     return res.json(room.get());
+  } catch (err) {
+    return res.sendStatus(400);
+  }
+});
+
+router.post('/:id/result', async (req, res, next) => {
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) {
+      return res.sendStatus(404);
+    }
+
+    if (room.resultImageSrc) {
+      return res.sendStatus(400);
+    }
+
+    const user = await getOrCreateUser(req, res);
+    const form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+      // save to uploads folder, update Room record
+      const file = files.image;
+      const fileName = `${room.id}.result.svg`;
+      const path = `${__dirname}/../uploads/${fileName}`;
+
+      fs.rename(file.path, path, async err => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+
+        room.resultImageSrc = fileName;
+        room.finishedDate = new Date();
+        await room.save();
+        return res.json(room);
+      });
+    });
   } catch (err) {
     return res.sendStatus(400);
   }

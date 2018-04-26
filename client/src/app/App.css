@@ -16,10 +16,26 @@
 .App .username {
   transition: all 100ms ease-in-out;
   cursor: pointer;
+  border-top: 1px solid #0000;
+  border-bottom: 1px dotted #eee;
 }
 .App .username:hover {
   color: #fff;
 }
 .App .username-wrapper input {
   width: 250px;
+}
+.App .color-wrapper {
+  margin-left: 25px;
+}
+.App .color {
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+.App-header .right {
+  display: flex;
+  flex: 0 0 105px;
 }

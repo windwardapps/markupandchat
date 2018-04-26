@@ -5,6 +5,7 @@ const Sequelize = require('sequelize');
 const Message = require('./models/Message');
 const User = require('./models/User');
 const RoomUser = require('./models/RoomUser');
+const Shape = require('./models/Shape');
 
 let wsServer;
 let socketRoomMap = {};
@@ -30,12 +31,34 @@ async function onChatMessage(socket, data) {
   wsServer.to(roomId).emit('chatmessage', message.get());
 }
 
-function onCreateShape(socket, data) {
-  debugger;
+async function onCreateShape(socket, data) {
+  const roomId = socketRoomMap[socket.id];
+  const shape = await Shape.create({
+    id: data.id,
+    roomId,
+    createdBy: data.userId,
+    type: data.type,
+    data: data.data
+  });
+
+  wsServer.to(roomId).emit('createshape', shape.get());
 }
 
-function onUpdateShape(socket, data) {
-  debugger;
+async function onUpdateShape(socket, shape) {
+  const roomId = socketRoomMap[socket.id];
+  const updatedShape = await Shape.findById(shape.id);
+  updatedShape.data = shape.data;
+  await updatedShape.save();
+
+  wsServer.to(roomId).emit('updateshape', updatedShape.get());
+}
+
+async function onDeleteShape(socket, id) {
+  const roomId = socketRoomMap[socket.id];
+  const shape = await Shape.findById(id);
+  await shape.destroy();
+
+  wsServer.to(roomId).emit('deleteshape', id);
 }
 
 function emit(room, eventName, data) {
@@ -72,6 +95,7 @@ exports.createWebsocketServer = function createWebsocketServer(app) {
     socket.on('chatmessage', data => onChatMessage(socket, data));
     socket.on('createshape', data => onCreateShape(socket, data));
     socket.on('updateshape', data => onUpdateShape(socket, data));
+    socket.on('deleteshape', data => onDeleteShape(socket, data));
   });
 
   httpServer.listen(3002, function() {

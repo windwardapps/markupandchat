@@ -1,27 +1,24 @@
 const Sequelize = require('sequelize');
 const db = require('../db/db');
 
-const Room = db.define('room', {
+const Shape = db.define('shape', {
   id: {
     type: Sequelize.UUID,
     primaryKey: true,
     default: Sequelize.UUIDV4
   },
-  name: {
+  roomId: {
+    type: Sequelize.UUID
+  },
+  type: {
     type: Sequelize.STRING
   },
-  imageSrc: {
-    type: Sequelize.STRING
-  },
-  resultImageSrc: {
-    type: Sequelize.STRING
-  },
-  finishedDate: {
-    type: Sequelize.DATE
+  data: {
+    type: Sequelize.JSON
   },
   createdBy: {
     type: Sequelize.UUID
   }
 });
 
-module.exports = Room;
+module.exports = Shape;

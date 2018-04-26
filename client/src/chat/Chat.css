@@ -22,6 +22,6 @@
   color: #aaa;
   margin-top: 10px;
 }
-.Chat button {
-  border-left: none;
+.Chat button:focus {
+  margin-left: -1px;
 }

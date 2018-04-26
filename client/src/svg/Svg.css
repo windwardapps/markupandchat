@@ -1,0 +1,8 @@
+﻿[name="Svg"] {
+  &.freehand {
+    cursor: crosshair;
+  }
+  &.dragging, &.dragging circle, &.dragging rect {
+    cursor: grabbing;
+  }
+}

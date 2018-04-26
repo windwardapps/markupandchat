@@ -58,3 +58,7 @@ option {
   font-size: 12px;
   padding: 9px 12px;
 }
+*:focus {
+  outline: none;
+  border-color: #aaf;
+}
