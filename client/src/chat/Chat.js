@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+import renderMessage from './renderMessage';
 
 import './Chat.css';
 
@@ -43,18 +43,7 @@ class Chat extends Component {
     return (
       <div className="Chat flex-col">
         <ul ref={(node) => (this._list = node)} className="flex-main">
-          {(messages.length ? messages : [defaultMessage]).map((m) => (
-            <li key={m.id} className="flex-col">
-              <div className="text">{m.text}</div>
-              <div className="info flex-row spc-between">
-                <span>
-                  {m.__default ? 'MarkupBot' : null}
-                  {(users.find((u) => u.id === m.createdBy) || {}).name}
-                </span>
-                <span>{moment(m.createdAt).fromNow()}</span>
-              </div>
-            </li>
-          ))}
+          {(messages.length ? messages : [defaultMessage]).map((m) => renderMessage(m, users))}
         </ul>
         <div className="flex-row">
           <input

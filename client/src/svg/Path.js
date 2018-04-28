@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Draggable from './Draggable';
+import store from '../store/store';
 
 import './Path.css';
-import store from '../store';
 
 export const scalePath = (d, scale, addScale) =>
   d

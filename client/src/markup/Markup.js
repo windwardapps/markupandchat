@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import uuid from 'uuid/v4';
 import Toolbar from './Toolbar';
 import Svg from './Svg';
+import storeListener from '../store/storeListener';
 
 import './Markup.css';
 
@@ -77,17 +78,9 @@ class Markup extends Component {
       <div className="Markup flex-row">
         {room.imageSrc ? (
           <div className="flex-row flex-main">
-            <Toolbar
-              room={room}
-              scale={scale}
-              initialScale={initialScale}
-              onScaleChange={this.onScaleChange}
-              onCreateShape={this.onCreateShape}
-            />
+            <Toolbar scale={scale} initialScale={initialScale} onScaleChange={this.onScaleChange} onCreateShape={this.onCreateShape} />
             <Svg
               ref={(ref) => (this._svgRef = ref)}
-              room={room}
-              shapes={shapes}
               scale={scale}
               onScaleChange={this.onScaleChange}
               onUpdateShape={onUpdateShape}
@@ -105,4 +98,4 @@ class Markup extends Component {
   }
 }
 
-export default Markup;
+export default storeListener('room', 'shapes', 'users', 'user')(Markup);

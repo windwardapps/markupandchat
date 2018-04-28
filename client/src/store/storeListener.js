@@ -1,27 +1,27 @@
 import React from 'react';
-import Store from '../store/Store';
+import store from './store';
 
-const storeListener = (items) => (Component) =>
+const storeListener = (...items) => (Component) =>
   class StoreListener extends React.Component {
     static WrappedComponent = Component;
 
     constructor(props) {
       super(props);
 
-      this._items = Array.isArray(items) ? items : [items];
+      this._items = items;
 
       const state = {};
-      this._items.forEach(({ name, defaultValue = null }) => {
-        Store.addListener(name, this.onChange);
-        state[name] = Store.get(name, defaultValue);
+      this._items.forEach((name) => {
+        store.addListener(name, this.onChange);
+        state[name] = store.get(name);
       });
 
       this.state = state;
     }
 
     componentWillUnmount() {
-      this._items.forEach(({ name }) => {
-        Store.removeListener(name, this.onChange);
+      this._items.forEach((name) => {
+        store.removeListener(name, this.onChange);
       });
     }
 

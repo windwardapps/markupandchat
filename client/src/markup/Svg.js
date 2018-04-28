@@ -3,7 +3,9 @@ import _ from 'lodash';
 import Rect from '../svg/Rect';
 import Ellipse from '../svg/Ellipse';
 import Path, { scalePath } from '../svg/Path';
-import store from '../store';
+import store from '../store/store';
+import renderMessage from '../chat/renderMessage';
+import storeListener from '../store/storeListener';
 
 import './Svg.css';
 
@@ -210,7 +212,7 @@ class Svg extends Component {
   };
 
   renderShape = (shape) => {
-    const { room, onUpdateShape } = this.props;
+    const { room, user, onUpdateShape } = this.props;
     const { activeId } = this.state;
     const { id, type, data } = shape;
     const Component = shapeComponents[type];
@@ -220,7 +222,7 @@ class Svg extends Component {
       <Component
         key={id}
         data={this.scaleShape(shape)}
-        canEdit={shape.createdBy === store.userId || room.createdBy === store.userId}
+        canEdit={shape.createdBy === user.id || room.createdBy === user.id}
         isActive={id === activeId}
         svgNode={this._svgNode}
         onUpdateShape={(data) => this.onUpdateShape(shape, data)}
@@ -230,7 +232,8 @@ class Svg extends Component {
   };
 
   render() {
-    const { room, shapes } = this.props;
+    const { room, shapes, messages, users, isSaving } = this.props;
+    const offset = isSaving ? 100 : 0;
 
     return (
       <div ref={(node) => (this._node = node)} className="Svg" onClick={this.onClick}>
@@ -244,6 +247,11 @@ class Svg extends Component {
             <img ref={(node) => (this._img = node)} src={`/${room.imageSrc}`} onLoad={this.onLoad} />
             <svg width="100%" height="100%" ref={(node) => (this._svgNode = node)}>
               {shapes.map(this.renderShape)}
+              <foreignObject style={{ display: isSaving ? 'block' : 'none' }}>
+                <div xmlns="http://www.w3.org/1999/xhtml" width="100%">
+                  {messages.map((m) => renderMessage(m, users))}
+                </div>
+              </foreignObject>
             </svg>
           </div>
         </div>
@@ -252,4 +260,4 @@ class Svg extends Component {
   }
 }
 
-export default Svg;
+export default storeListener('room', 'shapes', 'messages', 'users', 'user', 'isSaving')(Svg);

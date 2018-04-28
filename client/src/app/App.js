@@ -7,7 +7,7 @@ import io from 'socket.io-client';
 import randomColor from 'randomcolor';
 import Chat from '../chat/Chat';
 import Markup from '../markup/Markup';
-import store from '../store';
+import store from '../store/store';
 import { SketchPicker } from 'react-color';
 import Dialog from '../dialog/Dialog';
 import backArrow from '../assets/back-arrow.svg';
@@ -47,7 +47,12 @@ class App extends Component {
       socket.on('deleteshape', this.receiveDeletedShape);
     });
 
-    store.userId = res.data.user.id;
+    store.set('user', res.data.user);
+    store.set('users', res.data.users);
+    store.set('room', res.data.room);
+    store.set('messages', res.data.messages);
+    store.set('shapes', res.data.shapes);
+
     this.setState(res.data);
   }
 
@@ -69,26 +74,39 @@ class App extends Component {
 
   receiveNewMessage = (message) => {
     this.setState({ messages: this.state.messages.concat(message) });
+    store.set('messages', store.get('messages').concat(message));
   };
 
   receiveUsers = (users) => {
     this.setState({ users });
+    store.set('users', users);
   };
 
   receiveNewShape = (shape) => {
     this.setState({ shapes: this.state.shapes.concat(shape) });
+    store.set('shapes', store.get('shapes').concat(shape));
   };
 
   receiveUpdatedShape = (shape) => {
     this.setState({
       shapes: this.state.shapes.filter((s) => s.id !== shape.id).concat(shape)
     });
+
+    store.set(
+      'shapes',
+      store
+        .get('shapes')
+        .filter((s) => s.id !== shape.id)
+        .concat(shape)
+    );
   };
 
   receiveDeletedShape = (id) => {
     this.setState({
       shapes: this.state.shapes.filter((s) => s.id !== id)
     });
+
+    store.set('shapes', store.get('shapes').filter((s) => s.id !== id));
   };
 
   onCreateMessageClick = (text) => {
@@ -306,10 +324,6 @@ class App extends Component {
             <Chat messages={messages} users={users} onCreateMessageClick={this.onCreateMessageClick} />
             <Markup
               ref={(ref) => (this._markupRef = ref)}
-              room={room}
-              shapes={shapes}
-              user={user}
-              users={users}
               color={color}
               onUploadImageClick={this.onUploadImageClick}
               onCreateShape={this.onCreateShape}

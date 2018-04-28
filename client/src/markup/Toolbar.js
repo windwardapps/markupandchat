@@ -4,7 +4,7 @@ import './Toolbar.css';
 
 class Toolbar extends Component {
   render() {
-    const { room, scale, initialScale, onScaleChange, onCreateShape } = this.props;
+    const { scale, initialScale, onScaleChange, onCreateShape } = this.props;
 
     return (
       <div className="Toolbar flex-col">
