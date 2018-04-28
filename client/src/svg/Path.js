@@ -5,25 +5,26 @@ import Draggable from './Draggable';
 import './Path.css';
 import store from '../store';
 
-export const scalePath = (d, scale, addScale) => (
-  d.split(' ')
-    .map(token => {
+export const scalePath = (d, scale, addScale) =>
+  d
+    .split(' ')
+    .map((token) => {
       const i = parseFloat(token.trim());
       return isNaN(i) ? token : addScale ? i * scale : i / scale;
     })
-    .join(' ')
-);
+    .join(' ');
 
 const getRect = (props) => {
   const { d } = props.data;
-  const arr = d.split(/(M|L)/)
-    .map(t => t.trim())
-    .filter(t => /\d+\s\d+/.test(t));
+  const arr = d
+    .split(/(M|L)/)
+    .map((t) => t.trim())
+    .filter((t) => /\d+\s\d+/.test(t));
 
   let xValues = [];
   let yValues = [];
 
-  arr.forEach(t => {
+  arr.forEach((t) => {
     const tokens = t.split(' ');
     const x = parseInt(tokens[0]);
     const y = parseInt(tokens[1]);
@@ -51,11 +52,12 @@ const getShape = (props, rect) => {
   const diffX = x - initialX;
   const diffY = y - initialY;
 
-  const arr = d.split(/(M|L)/)
-    .map(t => t.trim())
-    .filter(t => /\d+\s\d+/.test(t));
+  const arr = d
+    .split(/(M|L)/)
+    .map((t) => t.trim())
+    .filter((t) => /\d+\s\d+/.test(t));
 
-  const newArr = arr.map(t => {
+  const newArr = arr.map((t) => {
     const tokens = t.split(' ');
     const x = parseInt(tokens[0]);
     const y = parseInt(tokens[1]);
@@ -68,14 +70,13 @@ const getShape = (props, rect) => {
 };
 
 class Path extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     canEdit: PropTypes.object,
     isActive: PropTypes.bool,
     setActiveShapeId: PropTypes.func,
     renderDragNode: PropTypes.func
-  }
+  };
 
   render() {
     const { data, canEdit, isActive, renderDragNode } = this.props;
@@ -103,11 +104,10 @@ class Path extends React.Component {
     if (!isActive && data.createdBy === store.userId) {
       setActiveShapeId(data.id);
     }
-  }
-
+  };
 }
 
-export function renderPath(data, additionalProps={}) {
+export function renderPath(data, additionalProps = {}) {
   // eslint-disable-next-line
   const { id, type, creator, _threadId, ...attrs } = data;
 
@@ -116,10 +116,7 @@ export function renderPath(data, additionalProps={}) {
     ...additionalProps
   };
 
-  return (
-    <path {...props} />
-  );
-
+  return <path {...props} />;
 }
 
 export default Draggable(getRect, getShape)(Path);

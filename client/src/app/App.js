@@ -53,53 +53,50 @@ class App extends Component {
     document.removeEventListener('keydown', this.onKeyDown);
   }
 
-  onClick = e => {
+  onClick = (e) => {
     if (this.state.showPicker) {
       this.hidePicker();
     }
   };
 
-  onKeyDown = e => {
-    if (
-      this.state.showPicker &&
-      (e.code === 'Escape' || e.keyCode === 27 || e.which === 27)
-    ) {
+  onKeyDown = (e) => {
+    if (this.state.showPicker && (e.code === 'Escape' || e.keyCode === 27 || e.which === 27)) {
       this.hidePicker();
     }
   };
 
-  receiveNewMessage = message => {
+  receiveNewMessage = (message) => {
     this.setState({ messages: this.state.messages.concat(message) });
   };
 
-  receiveUsers = users => {
+  receiveUsers = (users) => {
     this.setState({ users });
   };
 
-  receiveNewShape = shape => {
+  receiveNewShape = (shape) => {
     this.setState({ shapes: this.state.shapes.concat(shape) });
   };
 
-  receiveUpdatedShape = shape => {
+  receiveUpdatedShape = (shape) => {
     this.setState({
-      shapes: this.state.shapes.filter(s => s.id !== shape.id).concat(shape)
+      shapes: this.state.shapes.filter((s) => s.id !== shape.id).concat(shape)
     });
   };
 
-  receiveDeletedShape = id => {
+  receiveDeletedShape = (id) => {
     this.setState({
-      shapes: this.state.shapes.filter(s => s.id !== id)
+      shapes: this.state.shapes.filter((s) => s.id !== id)
     });
   };
 
-  onCreateMessageClick = text => {
+  onCreateMessageClick = (text) => {
     this.socket.emit('chatmessage', {
       text,
       userId: this.state.user.id
     });
   };
 
-  onUploadImageClick = async file => {
+  onUploadImageClick = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
     const res = await axios.put(`/api/rooms/${this.state.room.id}`, formData);
@@ -129,15 +126,15 @@ class App extends Component {
     });
   };
 
-  onUpdateShape = shape => {
+  onUpdateShape = (shape) => {
     this.socket.emit('updateshape', shape);
   };
 
-  onDeleteShape = id => {
+  onDeleteShape = (id) => {
     this.socket.emit('deleteshape', id);
   };
 
-  onColorClick = e => {
+  onColorClick = (e) => {
     const rect = e.target.getBoundingClientRect();
     const pickerStyle = {
       position: 'absolute',
@@ -148,16 +145,14 @@ class App extends Component {
     this.setState({ showPicker: true, pickerStyle });
   };
 
-  onColorChange = color => {
+  onColorChange = (color) => {
     localStorage.color = color.hex;
     this.setState({ color: color.hex });
-    this.state.shapes
-      .filter(s => s.createdBy === this.state.user.id)
-      .forEach(shape => {
-        const updatedShape = _.cloneDeep(shape);
-        updatedShape.data.stroke = color.hex;
-        this.onUpdateShape(updatedShape);
-      });
+    this.state.shapes.filter((s) => s.createdBy === this.state.user.id).forEach((shape) => {
+      const updatedShape = _.cloneDeep(shape);
+      updatedShape.data.stroke = color.hex;
+      this.onUpdateShape(updatedShape);
+    });
   };
 
   hidePicker = () => {
@@ -190,49 +185,28 @@ class App extends Component {
       newSvg.style.backgroundRepeat = `no-repeat`;
       newSvg.innerHTML = svg.innerHTML;
 
-      const svgString =
-        '<?xml version="1.0" encoding="UTF-8"?>' +
-        new XMLSerializer().serializeToString(newSvg);
+      const svgString = '<?xml version="1.0" encoding="UTF-8"?>' + new XMLSerializer().serializeToString(newSvg);
       const blob = new Blob([svgString], { type: 'image/svg+xml' });
       const formData = new FormData();
       formData.append('image', blob);
-      const res = await axios.post(
-        `/api/rooms/${this.state.room.id}/result`,
-        formData
-      );
+      const res = await axios.post(`/api/rooms/${this.state.room.id}/result`, formData);
 
       this.setState({ room: res.data });
 
       const iframe = document.createElement('iframe');
-      const hostname =
-        process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+      const hostname = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
       iframe.style.display = 'none';
       iframe.src = `${hostname}/api/rooms/${this.state.room.id}/result`;
       document.body.appendChild(iframe);
 
-      setTimeout(
-        () => this.setState({ dialogMessage: 'Your download is complete' }),
-        500
-      );
+      setTimeout(() => this.setState({ dialogMessage: 'Your download is complete' }), 500);
 
       setTimeout(() => this.setState({ dialogMessage: null }), 1500);
     }, 250);
   };
 
   render() {
-    const {
-      room,
-      shapes,
-      user,
-      users,
-      messages,
-      isEditing,
-      name,
-      color,
-      showPicker,
-      pickerStyle,
-      dialogMessage
-    } = this.state;
+    const { room, shapes, user, users, messages, isEditing, name, color, showPicker, pickerStyle, dialogMessage } = this.state;
 
     return (
       <div className="App flex-col" onClick={this.onClick}>
@@ -245,38 +219,25 @@ class App extends Component {
               {isEditing ? (
                 <input
                   value={name}
-                  onChange={e => this.setState({ name: e.target.value })}
-                  onKeyDown={e => {
+                  onChange={(e) => this.setState({ name: e.target.value })}
+                  onKeyDown={(e) => {
                     if (e.keyCode === 13) this.updateUser();
                   }}
                   onBlur={this.updateUser}
                   autoFocus
                 />
               ) : (
-                <span
-                  className="username"
-                  onClick={() =>
-                    this.setState({ isEditing: true, name: user.name })
-                  }>
+                <span className="username" onClick={() => this.setState({ isEditing: true, name: user.name })}>
                   {user.name}
                 </span>
               )}
             </div>
             <div className="color-wrapper flex-row align-center">
               <div>Your shape color: </div>
-              <div
-                className="color"
-                style={{ background: color }}
-                onClick={this.onColorClick}
-              />
+              <div className="color" style={{ background: color }} onClick={this.onColorClick} />
               <Portal isOpened={showPicker}>
-                <div style={pickerStyle} onClick={e => e.stopPropagation()}>
-                  {showPicker ? (
-                    <SketchPicker
-                      color={color}
-                      onChangeComplete={this.onColorChange}
-                    />
-                  ) : null}
+                <div style={pickerStyle} onClick={(e) => e.stopPropagation()}>
+                  {showPicker ? <SketchPicker color={color} onChangeComplete={this.onColorChange} /> : null}
                 </div>
               </Portal>
             </div>
@@ -289,18 +250,13 @@ class App extends Component {
         </header>
         {room.endDate ? (
           <div className="flex-row flex-main align-center justify-center">
-            Thanks for using MarkupAndChat! Your session has ended. Feel free to
-            create another room.
+            Thanks for using MarkupAndChat! Your session has ended. Feel free to create another room.
           </div>
         ) : (
           <div className="flex-row flex-main">
-            <Chat
-              messages={messages}
-              users={users}
-              onCreateMessageClick={this.onCreateMessageClick}
-            />
+            <Chat messages={messages} users={users} onCreateMessageClick={this.onCreateMessageClick} />
             <Markup
-              ref={ref => (this._markupRef = ref)}
+              ref={(ref) => (this._markupRef = ref)}
               room={room}
               shapes={shapes}
               user={user}

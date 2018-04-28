@@ -6,7 +6,6 @@ import Home from './home/Home';
 import './Root.css';
 
 class Root extends Component {
-
   render() {
     return (
       <Router>
@@ -15,7 +14,7 @@ class Root extends Component {
           <Route path="/rooms/:id" component={App} />
         </div>
       </Router>
-    )
+    );
   }
 }
 

@@ -21,10 +21,7 @@ class Home extends Component {
             <p> Upload an image to your room</p>
             <p> Use the chatbox to discuss your image</p>
             <p> Use the drawing tools to collaborate with your team</p>
-            <p>
-              Once you're finished, save the results to a new image that
-              contains all messages and markup
-            </p>
+            <p>Once you're finished, save the results to a new image that contains all messages and markup</p>
           </div>
         </div>
         <div className="flex-row align-center justify-center flex-main">

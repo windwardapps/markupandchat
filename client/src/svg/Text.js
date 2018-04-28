@@ -4,7 +4,7 @@ import _ from 'lodash';
 import Draggable from './Draggable';
 import Resizable from './Resizable';
 import Authenticator from '../../protocol/Authenticator';
-import {isInRect} from '../../util/DOMUtil';
+import { isInRect } from '../../util/DOMUtil';
 
 import './Text.css';
 
@@ -33,7 +33,6 @@ const getShape = (props, rect) => {
 @Draggable(getRect, getShape)
 @Resizable(getRect, getShape)
 export default class Text extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     isActive: PropTypes.bool,
@@ -41,18 +40,18 @@ export default class Text extends React.Component {
     onUpdateShape: PropTypes.func,
     renderDragNode: PropTypes.func,
     renderResizeNodes: PropTypes.func,
-    setOnDoubleClick: PropTypes.func,
-  }
+    setOnDoubleClick: PropTypes.func
+  };
 
   static defaultProps = {
     setActiveShapeId: _.noop
-  }
+  };
 
   state = {
     isEditing: false,
     value: '',
     height: this.props.data.height
-  }
+  };
 
   componentDidMount() {
     this.props.setOnDoubleClick(this.onDoubleClick);
@@ -65,26 +64,13 @@ export default class Text extends React.Component {
   }
 
   render() {
-    const {
-      data,
-      isActive,
-      renderDragNode,
-      renderResizeNodes,
-    } = this.props;
+    const { data, isActive, renderDragNode, renderResizeNodes } = this.props;
 
-    const {
-      x,
-      y,
-      width,
-      stroke,
-      fontSize,
-      creator,
-      font
-    } = data;
+    const { x, y, width, stroke, fontSize, creator, font } = data;
 
     if (this.state.isEditing) {
       const foProps = {
-        ref: node => this._node = node,
+        ref: (node) => (this._node = node),
         x,
         y,
         width,
@@ -93,7 +79,7 @@ export default class Text extends React.Component {
       };
 
       const inputProps = {
-        ref: node => this._textarea = node,
+        ref: (node) => (this._textarea = node),
         value: this.state.value,
         style: {
           fontSize,
@@ -136,11 +122,11 @@ export default class Text extends React.Component {
 
   addListeners = () => {
     document.addEventListener('click', this.onDocumentClick);
-  }
+  };
 
   removeListeners = () => {
     document.removeEventListener('click', this.onDocumentClick);
-  }
+  };
 
   onClick = () => {
     const { data, isActive, setActiveShapeId } = this.props;
@@ -156,7 +142,7 @@ export default class Text extends React.Component {
         setActiveShapeId(data.id);
       }
     }, 250);
-  }
+  };
 
   onDoubleClick = () => {
     const { text } = this.props.data;
@@ -164,12 +150,12 @@ export default class Text extends React.Component {
     this.setState({ isEditing: true, value });
     this.addListeners();
     this.props.setActiveShapeId(null);
-  }
+  };
 
   onChange = (e) => {
     const { value, scrollHeight } = e.target;
     this.setState({ value, height: scrollHeight });
-  }
+  };
 
   onBlur = async () => {
     await this.trim();
@@ -189,7 +175,7 @@ export default class Text extends React.Component {
     if (!_.isEqual(data, this.props.data)) {
       this.props.onUpdateShape(data);
     }
-  }
+  };
 
   onDocumentClick = (e) => {
     if (!this._node) {
@@ -208,34 +194,28 @@ export default class Text extends React.Component {
     if (this._node && !isInRect(rect, e.clientX, e.clientY)) {
       this.onBlur();
     }
-  }
+  };
 
-  trim = () => new Promise(resolve => {
-    this.setState({ value: this.state.value.trim() }, resolve);
-  })
-
-  shrinkTextarea = () => new Promise(resolve => {
-    this.setState({ height: this.state.height - 10 }, () => {
-      const { scrollHeight, clientHeight } = this._textarea;
-      if (scrollHeight >= clientHeight) {
-        this.setState({ height: this.state.height + 10 }, resolve);
-      } else {
-        this.shrinkTextarea().then(resolve);
-      }
+  trim = () =>
+    new Promise((resolve) => {
+      this.setState({ value: this.state.value.trim() }, resolve);
     });
-  })
+
+  shrinkTextarea = () =>
+    new Promise((resolve) => {
+      this.setState({ height: this.state.height - 10 }, () => {
+        const { scrollHeight, clientHeight } = this._textarea;
+        if (scrollHeight >= clientHeight) {
+          this.setState({ height: this.state.height + 10 }, resolve);
+        } else {
+          this.shrinkTextarea().then(resolve);
+        }
+      });
+    });
 }
 
-export function renderText(data, additionalProps={}) {
-  const {
-    x,
-    y,
-    width,
-    height,
-    stroke,
-    fontSize,
-    font
-  } = data;
+export function renderText(data, additionalProps = {}) {
+  const { x, y, width, height, stroke, fontSize, font } = data;
 
   const props = {
     x,
@@ -252,7 +232,7 @@ export function renderText(data, additionalProps={}) {
     fontSize,
     width,
     height,
-    color: stroke,
+    color: stroke
   };
 
   if (font) {
@@ -260,7 +240,9 @@ export function renderText(data, additionalProps={}) {
   }
 
   return (
-    <foreignObject {...props}><p style={style}>{data.text}</p></foreignObject>
+    <foreignObject {...props}>
+      <p style={style}>{data.text}</p>
+    </foreignObject>
   );
 }
 
@@ -276,4 +258,3 @@ const styles = {
     MozOsxFontSmoothing: 'grayscale'
   }
 };
-

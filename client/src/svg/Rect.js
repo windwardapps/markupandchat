@@ -26,24 +26,17 @@ const getShape = (props, rect) => {
 };
 
 class Rect extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     canEdit: PropTypes.bool,
     isActive: PropTypes.bool,
     setActiveShapeId: PropTypes.func,
     renderDragNode: PropTypes.func,
-    renderResizeNodes: PropTypes.func,
-  }
+    renderResizeNodes: PropTypes.func
+  };
 
   render() {
-    const {
-      data,
-      canEdit,
-      isActive,
-      renderDragNode,
-      renderResizeNodes,
-    } = this.props;
+    const { data, canEdit, isActive, renderDragNode, renderResizeNodes } = this.props;
 
     let additionalProps = {
       name: 'Rect'
@@ -68,20 +61,11 @@ class Rect extends React.Component {
     if (!isActive) {
       setActiveShapeId();
     }
-  }
-
+  };
 }
 
-export function renderRect(data, additionalProps={}) {
-  const {
-    x,
-    y,
-    width,
-    height,
-    strokeWidth,
-    stroke,
-    fill
-  } = data;
+export function renderRect(data, additionalProps = {}) {
+  const { x, y, width, height, strokeWidth, stroke, fill } = data;
 
   const props = {
     x,
@@ -94,9 +78,7 @@ export function renderRect(data, additionalProps={}) {
     ...additionalProps
   };
 
-  return (
-    <rect {...props} />
-  );
+  return <rect {...props} />;
 }
 
 export default Draggable(getRect, getShape)(Resizable(getRect, getShape)(Rect));

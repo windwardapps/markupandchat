@@ -1,5 +1,6 @@
 export function getClientXY(event) {
-  let x = 0, y = 0;
+  let x = 0,
+    y = 0;
 
   if (event.clientX) {
     x = event.clientX;
@@ -15,10 +16,5 @@ export function getClientXY(event) {
 }
 
 export function isInRect(rect, x, y) {
-  return (
-    x >= rect.left &&
-    x <= rect.right &&
-    y >= rect.top &&
-    y <= rect.bottom
-  );
+  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
 }

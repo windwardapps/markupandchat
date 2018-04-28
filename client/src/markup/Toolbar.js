@@ -11,7 +11,7 @@ class Toolbar extends Component {
         <button onClick={() => onCreateShape('rect')}>RECT</button>
         <button onClick={() => onCreateShape('ellipse')}>ELLIPSE</button>
         {/* <button onClick={() => onCreateShape('path')}>PATH</button> */}
-        <select value={scale} onChange={e => onScaleChange(parseFloat(e.target.value))}>
+        <select value={scale} onChange={(e) => onScaleChange(parseFloat(e.target.value))}>
           <option value={initialScale}>Fit</option>
           <option value={1}>Actual size</option>
           <option value={0.5}>50%</option>

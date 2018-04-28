@@ -7,7 +7,7 @@ const defaultMessage = {
   __default: true,
   id: -1,
   text: 'Type something below to get the conversation going',
-  createdAt: new Date().toJSON(),
+  createdAt: new Date().toJSON()
 };
 
 class Chat extends Component {
@@ -16,11 +16,7 @@ class Chat extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.messages !== this.props.messages &&
-      this._list.lastElementChild &&
-      this._list.lastElementChild.scrollIntoView
-    ) {
+    if (prevProps.messages !== this.props.messages && this._list.lastElementChild && this._list.lastElementChild.scrollIntoView) {
       this._list.lastElementChild.scrollIntoView();
     }
   }
@@ -39,21 +35,21 @@ class Chat extends Component {
     if (e.keyCode === 13) {
       this.onCreateMessageClick();
     }
-  }
+  };
 
   render() {
     const { messages, users, onCreateMessageClick } = this.props;
     const { value } = this.state;
     return (
       <div className="Chat flex-col">
-        <ul ref={node => (this._list = node)} className="flex-main">
-          {(messages.length ? messages : [defaultMessage]).map(m => (
+        <ul ref={(node) => (this._list = node)} className="flex-main">
+          {(messages.length ? messages : [defaultMessage]).map((m) => (
             <li key={m.id} className="flex-col">
               <div className="text">{m.text}</div>
               <div className="info flex-row spc-between">
                 <span>
                   {m.__default ? 'MarkupBot' : null}
-                  {(users.find(u => u.id === m.createdBy) || {}).name}
+                  {(users.find((u) => u.id === m.createdBy) || {}).name}
                 </span>
                 <span>{moment(m.createdAt).fromNow()}</span>
               </div>
@@ -65,7 +61,7 @@ class Chat extends Component {
             className="flex-main"
             placeholder="Send a message..."
             value={value}
-            onChange={e => this.setState({ value: e.target.value })}
+            onChange={(e) => this.setState({ value: e.target.value })}
             onKeyDown={this.onKeyDown}
           />
           <button onClick={this.onCreateMessageClick}>SEND</button>

@@ -25,7 +25,7 @@ const getShape = (props, rect) => {
     x1: x + 5,
     y1: y + 5,
     x2: x + width - 5,
-    y2: y + height - 5,
+    y2: y + height - 5
   };
 };
 
@@ -33,24 +33,17 @@ const getShape = (props, rect) => {
 @Draggable(getRect, getShape)
 @Resizable(getRect, getShape)
 export default class Line extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     isActive: PropTypes.bool,
     setActiveShapeId: PropTypes.func,
     renderDragNode: PropTypes.func,
     renderResizeNodes: PropTypes.func,
-    renderRotateNode: PropTypes.func,
-  }
+    renderRotateNode: PropTypes.func
+  };
 
   render() {
-    const {
-      data,
-      isActive,
-      renderDragNode,
-      renderResizeNodes,
-      renderRotateNode
-    } = this.props;
+    const { data, isActive, renderDragNode, renderResizeNodes, renderRotateNode } = this.props;
 
     let additionalProps = {
       name: 'Line',
@@ -76,22 +69,11 @@ export default class Line extends React.Component {
     if (!isActive && data.creator === Authenticator.AUTH_DATA.username) {
       setActiveShapeId(data.id);
     }
-  }
-
+  };
 }
 
-export function renderLine(data, additionalProps={}) {
-  const {
-    x1,
-    y1,
-    x2,
-    y2,
-    width,
-    height,
-    strokeWidth,
-    stroke,
-    fill
-  } = data;
+export function renderLine(data, additionalProps = {}) {
+  const { x1, y1, x2, y2, width, height, strokeWidth, stroke, fill } = data;
 
   const props = {
     x1,
@@ -106,7 +88,5 @@ export function renderLine(data, additionalProps={}) {
     ...additionalProps
   };
 
-  return (
-    <line {...props} />
-  );
+  return <line {...props} />;
 }

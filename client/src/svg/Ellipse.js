@@ -21,29 +21,22 @@ const getShape = (props, rect) => {
     cx: x + width / 2,
     cy: y + height / 2,
     rx: (width - 10) / 2,
-    ry: (height - 10) / 2,
+    ry: (height - 10) / 2
   };
 };
 
 class Ellipse extends React.Component {
-
   static propTypes = {
     data: PropTypes.object,
     canEdit: PropTypes.bool,
     isActive: PropTypes.bool,
     setActiveShapeId: PropTypes.func,
     renderDragNode: PropTypes.func,
-    renderResizeNodes: PropTypes.func,
-  }
+    renderResizeNodes: PropTypes.func
+  };
 
   render() {
-    const {
-      data,
-      canEdit,
-      isActive,
-      renderDragNode,
-      renderResizeNodes,
-    } = this.props;
+    const { data, canEdit, isActive, renderDragNode, renderResizeNodes } = this.props;
 
     let additionalProps = {
       name: 'Ellipse'
@@ -68,20 +61,11 @@ class Ellipse extends React.Component {
     if (!isActive) {
       setActiveShapeId(data.id);
     }
-  }
-
+  };
 }
 
-export function renderEllipse(data, additionalProps={}) {
-  const {
-    cx,
-    cy,
-    rx,
-    ry,
-    strokeWidth,
-    stroke,
-    fill
-  } = data;
+export function renderEllipse(data, additionalProps = {}) {
+  const { cx, cy, rx, ry, strokeWidth, stroke, fill } = data;
 
   const props = {
     cx,
@@ -94,9 +78,7 @@ export function renderEllipse(data, additionalProps={}) {
     ...additionalProps
   };
 
-  return (
-    <ellipse {...props} />
-  );
+  return <ellipse {...props} />;
 }
 
 export default Draggable(getRect, getShape)(Resizable(getRect, getShape)(Ellipse));
