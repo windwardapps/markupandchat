@@ -1,8 +1,5 @@
-﻿[name="Svg"] {
-  &.freehand {
-    cursor: crosshair;
-  }
-  &.dragging, &.dragging circle, &.dragging rect {
-    cursor: grabbing;
-  }
-}
+[name="Svg"].freehand {
+  cursor: crosshair; }
+
+[name="Svg"].dragging, [name="Svg"].dragging circle, [name="Svg"].dragging rect {
+  cursor: grabbing; }

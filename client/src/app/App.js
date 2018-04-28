@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Portal } from 'react-portal';
 import _ from 'lodash';
 import axios from 'axios';
@@ -9,6 +10,7 @@ import Markup from '../markup/Markup';
 import store from '../store';
 import { SketchPicker } from 'react-color';
 import Dialog from '../dialog/Dialog';
+import backArrow from '../assets/back-arrow.svg';
 
 import './App.css';
 
@@ -174,10 +176,11 @@ class App extends Component {
       ctx.drawImage(img, 0, 0);
       const url = canvas.toDataURL();
 
-      newSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
       newSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height}`);
       newSvg.setAttribute('width', `${img.width}px`);
       newSvg.setAttribute('height', `${img.height}px`);
+      newSvg.setAttribute('x', '0');
+      newSvg.setAttribute('y', '100');
       newSvg.style.width = `${img.width}px`;
       newSvg.style.height = `${img.height}px`;
       newSvg.style.backgroundImage = `url(${url})`;
@@ -185,8 +188,48 @@ class App extends Component {
       newSvg.style.backgroundRepeat = `no-repeat`;
       newSvg.innerHTML = svg.innerHTML;
 
-      const svgString = '<?xml version="1.0" encoding="UTF-8"?>' + new XMLSerializer().serializeToString(newSvg);
-      const blob = new Blob([svgString], { type: 'image/svg+xml' });
+      const svgPrefix = '<?xml version="1.0" encoding="UTF-8"?>';
+      const svgString = new XMLSerializer().serializeToString(newSvg);
+      const xmlns = 'xmlns="http://www.w3.org/1999/xhtml"';
+      const outerSvg = document.createElement('svg');
+      outerSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      outerSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height + 100}`);
+      outerSvg.setAttribute('width', `${img.width}px`);
+      outerSvg.setAttribute('height', `${img.height + 100}px`);
+      outerSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+      const usersHtml = _.uniqBy(this.state.shapes, 'createdBy').map((shape) => {
+        const user = this.state.users.find((u) => u.id === shape.createdBy);
+        return `
+          <div>
+            <span style="display:inline-block; margin-right:5px; border-radius:50%; width:8px; height:8px; background:${
+              shape.data.stroke
+            }"></span>
+            <span>${user.name}</span>
+          </div>
+        `;
+      });
+
+      const foreignObjectHtml = `
+        <foreignObject width="${img.width}" height="100">
+          <body ${xmlns} style="height: 100px; padding: 20px; margin:0; box-sizing:border-box; font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; color: #555;">
+            ${usersHtml}
+          </body>
+        </foreignObject>
+      `;
+
+      const s = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${img.width} ${img.height + 100}" width="${img.width}px" height="${img.height +
+        100}px">
+          ${foreignObjectHtml}
+          ${svgString}
+        </svg>
+      `;
+
+      outerSvg.innerHTML = foreignObjectHtml + svgString;
+      const outerSvgString = svgPrefix + new XMLSerializer().serializeToString(outerSvg);
+
+      const blob = new Blob([s], { type: 'image/svg+xml' });
       const formData = new FormData();
       formData.append('image', blob);
       const res = await axios.post(`/api/rooms/${this.state.room.id}/result`, formData);
@@ -211,9 +254,13 @@ class App extends Component {
     return (
       <div className="App flex-col" onClick={this.onClick}>
         <header className="App-header flex-row align-center">
+          <div className="back">
+            <Link to="/">
+              <img src={backArrow} alt="Back" />
+            </Link>
+          </div>
           <div className="logo">MarkupAndChat</div>
           <div className="flex-main flex-row align-center">
-            <div>Room ID: {room.id}</div>
             <div className="username-wrapper">
               <span>Your name: </span>
               {isEditing ? (
@@ -243,9 +290,11 @@ class App extends Component {
             </div>
           </div>
           <div className="right">
-            <button className="done" onClick={this.onDoneClick}>
-              END SESSION
-            </button>
+            {room.imageSrc && !room.endDate ? (
+              <button className="done" onClick={this.onDoneClick}>
+                END SESSION
+              </button>
+            ) : null}
           </div>
         </header>
         {room.endDate ? (

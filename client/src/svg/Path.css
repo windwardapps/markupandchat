@@ -1,5 +1,2 @@
-[name="Path"] {
-  &.selectable {
-    cursor: pointer;
-  }
-}
+[name="Path"].selectable {
+  cursor: pointer; }

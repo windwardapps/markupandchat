@@ -89,7 +89,11 @@ class Svg extends Component {
   };
 
   onKeyDown = (e) => {
-    if (this.state.activeId && e.keyCode === 8 && !_.includes(['input, select, button'], document.activeElement.nodeName.toLowerCase())) {
+    if (
+      this.state.activeId &&
+      e.keyCode === 8 &&
+      !_.includes(['input', 'select', 'button'], document.activeElement.nodeName.toLowerCase())
+    ) {
       this.props.onDeleteShape(this.state.activeId);
     }
   };

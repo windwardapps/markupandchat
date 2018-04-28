@@ -1,0 +1,35 @@
+.Home {
+  min-height: 100vh;
+  display: flex;
+  color: #ccc;
+  background: #005aa7;
+  & > .content {
+    padding: 40px;
+    h1 {
+      color: #eee;
+    }
+  }
+  .form {
+    background: #f2fcfe;
+  }
+  h2 {
+    font-weight: 400;
+    font-size: 17px;
+  }
+  h3 {
+    margin-top: 50px;
+  }
+  @media (max-width: 768px) {
+    display: block;
+    & > .content {
+      padding: 20px;
+      h1 {
+        margin: 0;
+        padding: 0;
+      }
+    }
+    .form {
+      background: #0000;
+    }
+  }
+}

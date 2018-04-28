@@ -1,9 +1,10 @@
 [name="Text"] {
   user-select: none;
-  cursor: default; }
-  [name="Text"].selectable {
-    cursor: pointer; }
-  [name="Text"] textarea {
+  cursor: default;
+  &.selectable {
+    cursor: pointer;
+  }
+  textarea {
     font-family: 'Montserrat', sans-serif;
     background: none;
     box-shadow: none;
@@ -12,4 +13,6 @@
     height: 100%;
     padding: 2px;
     font-weight: 600;
-    line-height: 27px; }
+    line-height: 27px;
+  }
+}

@@ -1,5 +1,2 @@
-[name="Line"] {
-  &.selectable {
-    cursor: pointer;
-  }
-}
+[name="Line"].selectable {
+  cursor: pointer; }

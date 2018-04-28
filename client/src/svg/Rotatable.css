@@ -1,5 +1,2 @@
-[name="Rotatable"] {
-  circle {
-    cursor: move;
-  }
-}
+[name="Rotatable"] circle {
+  cursor: move; }
