@@ -104,7 +104,7 @@ router.post('/:id/result', async (req, res, next) => {
     form.parse(req, function(err, fields, files) {
       // save to uploads folder, update Room record
       const file = files.image;
-      const fileName = `${room.id}.result.svg`;
+      const fileName = `${room.id}.result.png`;
       const path = `${__dirname}/../uploads/${fileName}`;
 
       fs.rename(file.path, path, async err => {

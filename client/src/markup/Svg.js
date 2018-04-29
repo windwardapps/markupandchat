@@ -26,7 +26,6 @@ class Svg extends Component {
   state = {
     naturalWidth: 0,
     naturalHeight: 0,
-    activeId: null,
     center: {
       x: 0,
       y: 0,
@@ -38,6 +37,10 @@ class Svg extends Component {
   componentDidMount() {
     window.addEventListener('resize', this.onLoad);
     window.addEventListener('keydown', this.onKeyDown);
+
+    this._img = new Image();
+    this._img.onload = this.onLoad;
+    this._img.src = `/${this.props.room.imageSrc}`;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,6 +64,10 @@ class Svg extends Component {
       const { clientWidth, clientHeight, scrollWidth, scrollHeight } = this._scrollNode;
       this._scrollNode.scrollLeft = center.x / center.scrollWidth * scrollWidth - clientWidth / 2;
       this._scrollNode.scrollTop = center.y / center.scrollHeight * scrollHeight - clientHeight / 2;
+    }
+
+    if (this.props.isSaving && this._list && !this.state.additionalHeight) {
+      this.setState({ additionalHeight: this._list.scrollHeight });
     }
   }
 
@@ -87,22 +94,23 @@ class Svg extends Component {
       naturalHeight
     });
 
-    this.props.onScaleChange(scale, true);
+    store.set('scale', scale);
+    store.set('initialScale', scale);
   };
 
   onKeyDown = (e) => {
     if (
-      this.state.activeId &&
+      this.props.activeShapeId &&
       e.keyCode === 8 &&
       !_.includes(['input', 'select', 'button'], document.activeElement.nodeName.toLowerCase())
     ) {
-      this.props.onDeleteShape(this.state.activeId);
+      this.props.onDeleteShape(this.props.activeShapeId);
     }
   };
 
   onClick = () => {
-    if (this.state.activeId && !this._ignoreClickEvent) {
-      this.setState({ activeId: null });
+    if (this.props.activeShapeId && !this._ignoreClickEvent) {
+      store.set('activeShapeId', null);
     }
   };
 
@@ -197,8 +205,8 @@ class Svg extends Component {
     return scaledData;
   };
 
-  setActiveShapeId = (activeId) => {
-    this.setState({ activeId });
+  setActiveShapeId = (activeShapeId) => {
+    store.set('activeShapeId', activeShapeId);
   };
 
   onUpdateShape = (shape, data) => {
@@ -213,7 +221,7 @@ class Svg extends Component {
 
   renderShape = (shape) => {
     const { room, user, onUpdateShape } = this.props;
-    const { activeId } = this.state;
+    const { activeShapeId } = this.props;
     const { id, type, data } = shape;
     const Component = shapeComponents[type];
 
@@ -223,17 +231,19 @@ class Svg extends Component {
         key={id}
         data={this.scaleShape(shape)}
         canEdit={shape.createdBy === user.id || room.createdBy === user.id}
-        isActive={id === activeId}
+        isActive={id === activeShapeId}
         svgNode={this._svgNode}
         onUpdateShape={(data) => this.onUpdateShape(shape, data)}
-        setActiveShapeId={() => this.setState({ activeId: id })}
+        setActiveShapeId={() => store.set('activeShapeId', id)}
       />
     );
   };
 
   render() {
     const { room, shapes, messages, users, isSaving } = this.props;
+    const { additionalHeight } = this.state;
     const offset = isSaving ? 100 : 0;
+    const { width, height } = this.getPosition();
 
     return (
       <div ref={(node) => (this._node = node)} className="Svg" onClick={this.onClick}>
@@ -244,13 +254,25 @@ class Svg extends Component {
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}>
           <div className="img-wrapper" style={this.getPosition()}>
-            <img ref={(node) => (this._img = node)} src={`/${room.imageSrc}`} onLoad={this.onLoad} />
-            <svg width="100%" height="100%" ref={(node) => (this._svgNode = node)}>
+            <svg
+              width="100%"
+              height={additionalHeight ? height + additionalHeight : '100%'}
+              ref={(node) => (this._svgNode = node)}
+              style={{
+                ...styles.svg,
+                backgroundImage: `url(/${room.imageSrc})`,
+                backgroundSize: `${width}px ${height}px`,
+                height: additionalHeight ? height + additionalHeight : '100%'
+              }}>
               {shapes.map(this.renderShape)}
-              <foreignObject style={{ display: isSaving ? 'block' : 'none' }}>
-                <div xmlns="http://www.w3.org/1999/xhtml" width="100%">
+              <foreignObject style={{ ...styles.foreignObject, display: isSaving ? 'block' : 'none' }}>
+                <ul
+                  ref={(node) => (this._list = node)}
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  width="100%"
+                  style={{ ...styles.ul, top: height }}>
                   {messages.map((m) => renderMessage(m, users))}
-                </div>
+                </ul>
               </foreignObject>
             </svg>
           </div>
@@ -260,4 +282,22 @@ class Svg extends Component {
   }
 }
 
-export default storeListener('room', 'shapes', 'messages', 'users', 'user', 'isSaving')(Svg);
+export default storeListener('room', 'shapes', 'messages', 'users', 'user', 'isSaving', 'scale', 'activeShapeId')(Svg);
+
+const styles = {
+  foreignObject: {
+    width: '100%'
+  },
+  ul: {
+    fontFamily: "'Lucida Grande', Helvetica, Arial, sans-serif",
+    width: 500,
+    listStyle: 'none',
+    margin: 0,
+    padding: '0 15px 15px',
+    position: 'absolute'
+  },
+  svg: {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'top left'
+  }
+};

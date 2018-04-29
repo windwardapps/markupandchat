@@ -121,6 +121,7 @@ class App extends Component {
     formData.append('image', file);
     const res = await axios.put(`/api/rooms/${this.state.room.id}`, formData);
     this.setState({ room: res.data });
+    store.set('room', res.data);
   };
 
   updateUser = async () => {
@@ -181,89 +182,96 @@ class App extends Component {
 
   onDoneClick = () => {
     this.setState({ dialogMessage: 'Saving... Please wait...' });
-    this._markupRef.setState({ scale: 1 });
-    this._markupRef._svgRef.setState({ activeId: null });
-    setTimeout(async () => {
+    store.set('scale', 1);
+    store.set('activeShapeId', null);
+
+    setTimeout(() => {
       const svg = document.querySelector('.Svg svg');
-      const img = document.querySelector('.Svg img');
+      const rect = svg.getBoundingClientRect();
       const canvas = document.createElement('canvas');
-      const newSvg = document.createElement('svg');
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = rect.width;
+      canvas.height = rect.height;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      const url = canvas.toDataURL();
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        const dataUrl = canvas.toDataURL();
+        svg.style.backgroundImage = `url(${dataUrl})`;
+        store.set('isSaving', true);
+      };
 
-      newSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height}`);
-      newSvg.setAttribute('width', `${img.width}px`);
-      newSvg.setAttribute('height', `${img.height}px`);
-      newSvg.setAttribute('x', '0');
-      newSvg.setAttribute('y', '100');
-      newSvg.style.width = `${img.width}px`;
-      newSvg.style.height = `${img.height}px`;
-      newSvg.style.backgroundImage = `url(${url})`;
-      newSvg.style.backgroundSize = `contain`;
-      newSvg.style.backgroundRepeat = `no-repeat`;
-      newSvg.innerHTML = svg.innerHTML;
+      img.src = `/${this.state.room.imageSrc}`;
+    }, 1000);
 
-      const svgPrefix = '<?xml version="1.0" encoding="UTF-8"?>';
-      const svgString = new XMLSerializer().serializeToString(newSvg);
-      const xmlns = 'xmlns="http://www.w3.org/1999/xhtml"';
-      const outerSvg = document.createElement('svg');
-      outerSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      outerSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height + 100}`);
-      outerSvg.setAttribute('width', `${img.width}px`);
-      outerSvg.setAttribute('height', `${img.height + 100}px`);
-      outerSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    setTimeout(async () => {
+      // const img = document.querySelector('.Svg img');
+      // const newSvg = document.createElement('svg');
+      const svg = document.querySelector('.Svg svg');
+      const rect = svg.getBoundingClientRect();
+      const canvas = document.createElement('canvas');
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      const ctx = canvas.getContext('2d');
 
-      const usersHtml = _.uniqBy(this.state.shapes, 'createdBy').map((shape) => {
-        const user = this.state.users.find((u) => u.id === shape.createdBy);
-        return `
-          <div>
-            <span style="display:inline-block; margin-right:5px; border-radius:50%; width:8px; height:8px; background:${
-              shape.data.stroke
-            }"></span>
-            <span>${user.name}</span>
-          </div>
-        `;
-      });
+      const svgString = new XMLSerializer().serializeToString(svg);
+      const encodedSvgString = encodeURIComponent(svgString);
 
-      const foreignObjectHtml = `
-        <foreignObject width="${img.width}" height="100">
-          <body ${xmlns} style="height: 100px; padding: 20px; margin:0; box-sizing:border-box; font-family: 'Lucida Grande', Helvetica, Arial, sans-serif; color: #555;">
-            ${usersHtml}
-          </body>
-        </foreignObject>
-      `;
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(async (pngBlob) => {
+          const formData = new FormData();
+          formData.append('image', pngBlob);
+          const res = await axios.post(`/api/rooms/${this.state.room.id}/result`, formData);
 
-      const s = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${img.width} ${img.height + 100}" width="${img.width}px" height="${img.height +
-        100}px">
-          ${foreignObjectHtml}
-          ${svgString}
-        </svg>
-      `;
+          this.setState({ room: res.data });
 
-      outerSvg.innerHTML = foreignObjectHtml + svgString;
-      const outerSvgString = svgPrefix + new XMLSerializer().serializeToString(outerSvg);
+          const iframe = document.createElement('iframe');
+          const hostname = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+          iframe.style.display = 'none';
+          iframe.src = `${hostname}/api/rooms/${this.state.room.id}/result`;
+          document.body.appendChild(iframe);
 
-      const blob = new Blob([s], { type: 'image/svg+xml' });
-      const formData = new FormData();
-      formData.append('image', blob);
-      const res = await axios.post(`/api/rooms/${this.state.room.id}/result`, formData);
+          setTimeout(() => this.setState({ dialogMessage: 'Your download is complete' }), 500);
+          setTimeout(() => this.setState({ dialogMessage: null }), 1500);
+        });
+      };
 
-      this.setState({ room: res.data });
+      img.onerror = (e) => {
+        store.set('isSaving', false);
+        this.setState({ dialogMessage: 'Oops! An error occurred :/' });
+        setTimeout(() => this.setState({ dialogMessage: null }), 5000);
+      };
 
-      const iframe = document.createElement('iframe');
-      const hostname = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
-      iframe.style.display = 'none';
-      iframe.src = `${hostname}/api/rooms/${this.state.room.id}/result`;
-      document.body.appendChild(iframe);
+      img.src = 'data:image/svg+xml,' + encodedSvgString;
 
-      setTimeout(() => this.setState({ dialogMessage: 'Your download is complete' }), 500);
+      // newSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height}`);
+      // newSvg.setAttribute('width', `${img.width}px`);
+      // newSvg.setAttribute('height', `${img.height}px`);
+      // newSvg.setAttribute('x', '0');
+      // newSvg.setAttribute('y', '100');
+      // newSvg.style.width = `${img.width}px`;
+      // newSvg.style.height = `${img.height}px`;
+      // newSvg.style.backgroundImage = `url(${url})`;
+      // newSvg.style.backgroundSize = `contain`;
+      // newSvg.style.backgroundRepeat = `no-repeat`;
+      // newSvg.innerHTML = svg.innerHTML;
 
-      setTimeout(() => this.setState({ dialogMessage: null }), 1500);
-    }, 250);
+      // const svgPrefix = '<?xml version="1.0" encoding="UTF-8"?>';
+      // const svgString = new XMLSerializer().serializeToString(newSvg);
+      // const xmlns = 'xmlns="http://www.w3.org/1999/xhtml"';
+      // const outerSvg = document.createElement('svg');
+      // outerSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      // outerSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height + 100}`);
+      // outerSvg.setAttribute('width', `${img.width}px`);
+      // outerSvg.setAttribute('height', `${img.height + 100}px`);
+      // outerSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+
+      // outerSvg.innerHTML = foreignObjectHtml + svgString;
+      // const outerSvgString = svgPrefix + new XMLSerializer().serializeToString(outerSvg);
+
+      // const blob = new Blob([s], { type: 'image/svg+xml' });
+    }, 3000);
   };
 
   render() {

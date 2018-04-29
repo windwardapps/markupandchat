@@ -7,12 +7,15 @@ class Store extends EventEmitter {
     messages: [],
     users: [],
     user: {},
-    room: {}
+    room: {},
+    activeShapeId: null,
+    scale: 1
   };
 
   get(key) {
     return this.data[key];
   }
+
   set(key, value) {
     this.data[key] = value;
     this.emit(key, { name: key, data: value });

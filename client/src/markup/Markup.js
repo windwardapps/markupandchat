@@ -5,13 +5,9 @@ import Svg from './Svg';
 import storeListener from '../store/storeListener';
 
 import './Markup.css';
+import store from '../store/store';
 
 class Markup extends Component {
-  state = {
-    scale: 1,
-    initialScale: 1
-  };
-
   onFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -23,19 +19,10 @@ class Markup extends Component {
     this._fileInput.click();
   };
 
-  onScaleChange = (scale, initial = false) => {
-    const nextState = { scale };
-    if (initial) {
-      nextState.initialScale = scale;
-    }
-
-    this.setState(nextState);
-  };
-
   onCreateShape = (type) => {
     const scrollNode = document.querySelector('.scroll-node');
     const svgNode = document.querySelector('svg');
-    const { scale } = this.state;
+    const { scale } = this.props;
     const offset = 100;
     const x = Math.round((scrollNode.scrollLeft + svgNode.clientWidth / 2 - offset) / scale);
     const y = Math.round((scrollNode.scrollTop + svgNode.clientHeight / 2 - offset) / scale);
@@ -68,24 +55,18 @@ class Markup extends Component {
     }
 
     this.props.onCreateShape(id, type, data);
-    this._svgRef.setState({ activeId: id });
+    store.set('activeShapeId', id);
   };
 
   render() {
     const { room, shapes, user, users, onCreateShape, onUpdateShape, onDeleteShape } = this.props;
-    const { scale, initialScale } = this.state;
+
     return (
       <div className="Markup flex-row">
         {room.imageSrc ? (
           <div className="flex-row flex-main">
-            <Toolbar scale={scale} initialScale={initialScale} onScaleChange={this.onScaleChange} onCreateShape={this.onCreateShape} />
-            <Svg
-              ref={(ref) => (this._svgRef = ref)}
-              scale={scale}
-              onScaleChange={this.onScaleChange}
-              onUpdateShape={onUpdateShape}
-              onDeleteShape={onDeleteShape}
-            />
+            <Toolbar onCreateShape={this.onCreateShape} />
+            <Svg ref={(ref) => (this._svgRef = ref)} onUpdateShape={onUpdateShape} onDeleteShape={onDeleteShape} />
           </div>
         ) : (
           <div className="flex-main flex-row align-center justify-center">
@@ -98,4 +79,4 @@ class Markup extends Component {
   }
 }
 
-export default storeListener('room', 'shapes', 'users', 'user')(Markup);
+export default storeListener('room', 'shapes', 'users', 'user', 'scale')(Markup);
