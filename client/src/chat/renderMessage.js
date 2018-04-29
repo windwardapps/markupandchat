@@ -1,7 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 
-export default function renderMessage(message, users) {
+export default function renderMessage(message, users, format = null) {
+  const date = moment(message.createdAt);
   return (
     <li key={message.id} style={styles.li}>
       <div>{message.text}</div>
@@ -10,7 +11,7 @@ export default function renderMessage(message, users) {
           {message.__default ? 'MarkupBot' : null}
           {(users.find((u) => u.id === message.createdBy) || {}).name}
         </span>
-        <span>{moment(message.createdAt).fromNow()}</span>
+        <span>{format ? date.format(format) : date.fromNow()}</span>
       </div>
     </li>
   );

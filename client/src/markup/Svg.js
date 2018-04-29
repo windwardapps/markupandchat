@@ -67,7 +67,7 @@ class Svg extends Component {
     }
 
     if (this.props.isSaving && this._list && !this.state.additionalHeight) {
-      this.setState({ additionalHeight: this._list.scrollHeight });
+      this.setState({ additionalHeight: this._list.scrollHeight + 25 });
     }
   }
 
@@ -271,7 +271,7 @@ class Svg extends Component {
                   xmlns="http://www.w3.org/1999/xhtml"
                   width="100%"
                   style={{ ...styles.ul, top: height }}>
-                  {messages.map((m) => renderMessage(m, users))}
+                  {messages.map((m) => renderMessage(m, users, 'M/D/Y h:mm a'))}
                 </ul>
               </foreignObject>
             </svg>
