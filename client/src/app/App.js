@@ -11,6 +11,7 @@ import store from '../store/store';
 import { SketchPicker } from 'react-color';
 import Dialog from '../dialog/Dialog';
 import backArrow from '../assets/back-arrow.svg';
+import storeListener from '../store/storeListener';
 
 import './App.css';
 
@@ -52,12 +53,11 @@ class App extends Component {
     store.set('room', res.data.room);
     store.set('messages', res.data.messages);
     store.set('shapes', res.data.shapes);
-
-    this.setState(res.data);
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
+    this.socket.close();
   }
 
   onClick = (e) => {
@@ -73,25 +73,18 @@ class App extends Component {
   };
 
   receiveNewMessage = (message) => {
-    this.setState({ messages: this.state.messages.concat(message) });
     store.set('messages', store.get('messages').concat(message));
   };
 
   receiveUsers = (users) => {
-    this.setState({ users });
     store.set('users', users);
   };
 
   receiveNewShape = (shape) => {
-    this.setState({ shapes: this.state.shapes.concat(shape) });
     store.set('shapes', store.get('shapes').concat(shape));
   };
 
   receiveUpdatedShape = (shape) => {
-    this.setState({
-      shapes: this.state.shapes.filter((s) => s.id !== shape.id).concat(shape)
-    });
-
     store.set(
       'shapes',
       store
@@ -102,46 +95,42 @@ class App extends Component {
   };
 
   receiveDeletedShape = (id) => {
-    this.setState({
-      shapes: this.state.shapes.filter((s) => s.id !== id)
-    });
-
     store.set('shapes', store.get('shapes').filter((s) => s.id !== id));
   };
 
   onCreateMessageClick = (text) => {
     this.socket.emit('chatmessage', {
       text,
-      userId: this.state.user.id
+      userId: this.props.user.id
     });
   };
 
   onUploadImageClick = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
-    const res = await axios.put(`/api/rooms/${this.state.room.id}`, formData);
-    this.setState({ room: res.data });
+    const res = await axios.put(`/api/rooms/${this.props.room.id}`, formData);
     store.set('room', res.data);
   };
 
   updateUser = async () => {
-    const { user, name } = this.state;
+    const { user, name } = this.props;
     if (!name.trim()) {
       return this.setState({ isEditing: false });
     }
 
     const res = await axios.put(`/api/users/${user.id}`, {
       name,
-      roomId: this.state.room.id
+      roomId: this.props.room.id
     });
 
-    this.setState({ isEditing: false, name: '', user: res.data });
+    this.setState({ isEditing: false, name: '' });
+    store.set('user', res.data);
   };
 
   onCreateShape = (id, type, data) => {
     this.socket.emit('createshape', {
       id,
-      userId: this.state.user.id,
+      userId: this.props.user.id,
       type,
       data
     });
@@ -169,7 +158,7 @@ class App extends Component {
   onColorChange = (color) => {
     localStorage.color = color.hex;
     this.setState({ color: color.hex });
-    this.state.shapes.filter((s) => s.createdBy === this.state.user.id).forEach((shape) => {
+    this.props.shapes.filter((s) => s.createdBy === this.props.user.id).forEach((shape) => {
       const updatedShape = _.cloneDeep(shape);
       updatedShape.data.stroke = color.hex;
       this.onUpdateShape(updatedShape);
@@ -185,6 +174,7 @@ class App extends Component {
     store.set('scale', 1);
     store.set('activeShapeId', null);
 
+    // Convert room image to dataUrl
     setTimeout(() => {
       const svg = document.querySelector('.Svg svg');
       const rect = svg.getBoundingClientRect();
@@ -200,12 +190,13 @@ class App extends Component {
         store.set('isSaving', true);
       };
 
-      img.src = `/${this.state.room.imageSrc}`;
+      img.src = `/${this.props.room.imageSrc}`;
     }, 1000);
 
-    setTimeout(async () => {
-      // const img = document.querySelector('.Svg img');
-      // const newSvg = document.createElement('svg');
+    // Show messages under svg image, serialize svg document, create
+    // image from svg string, draw image to canvas, convert canvas data
+    // to png, upload png, download png via iframe, end session.
+    setTimeout(() => {
       const svg = document.querySelector('.Svg svg');
       const rect = svg.getBoundingClientRect();
       const canvas = document.createElement('canvas');
@@ -222,14 +213,14 @@ class App extends Component {
         canvas.toBlob(async (pngBlob) => {
           const formData = new FormData();
           formData.append('image', pngBlob);
-          const res = await axios.post(`/api/rooms/${this.state.room.id}/result`, formData);
+          const res = await axios.post(`/api/rooms/${this.props.room.id}/result`, formData);
 
-          this.setState({ room: res.data });
+          store.set('room', res.data);
 
           const iframe = document.createElement('iframe');
           const hostname = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
           iframe.style.display = 'none';
-          iframe.src = `${hostname}/api/rooms/${this.state.room.id}/result`;
+          iframe.src = `${hostname}/api/rooms/${this.props.room.id}/result`;
           document.body.appendChild(iframe);
 
           setTimeout(() => this.setState({ dialogMessage: 'Your download is complete' }), 500);
@@ -244,38 +235,12 @@ class App extends Component {
       };
 
       img.src = 'data:image/svg+xml,' + encodedSvgString;
-
-      // newSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height}`);
-      // newSvg.setAttribute('width', `${img.width}px`);
-      // newSvg.setAttribute('height', `${img.height}px`);
-      // newSvg.setAttribute('x', '0');
-      // newSvg.setAttribute('y', '100');
-      // newSvg.style.width = `${img.width}px`;
-      // newSvg.style.height = `${img.height}px`;
-      // newSvg.style.backgroundImage = `url(${url})`;
-      // newSvg.style.backgroundSize = `contain`;
-      // newSvg.style.backgroundRepeat = `no-repeat`;
-      // newSvg.innerHTML = svg.innerHTML;
-
-      // const svgPrefix = '<?xml version="1.0" encoding="UTF-8"?>';
-      // const svgString = new XMLSerializer().serializeToString(newSvg);
-      // const xmlns = 'xmlns="http://www.w3.org/1999/xhtml"';
-      // const outerSvg = document.createElement('svg');
-      // outerSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      // outerSvg.setAttribute('viewBox', `0 0 ${img.width} ${img.height + 100}`);
-      // outerSvg.setAttribute('width', `${img.width}px`);
-      // outerSvg.setAttribute('height', `${img.height + 100}px`);
-      // outerSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-
-      // outerSvg.innerHTML = foreignObjectHtml + svgString;
-      // const outerSvgString = svgPrefix + new XMLSerializer().serializeToString(outerSvg);
-
-      // const blob = new Blob([s], { type: 'image/svg+xml' });
     }, 3000);
   };
 
   render() {
-    const { room, shapes, user, users, messages, isEditing, name, color, showPicker, pickerStyle, dialogMessage } = this.state;
+    const { room, user, users, messages } = this.props;
+    const { isEditing, name, color, showPicker, pickerStyle, dialogMessage } = this.state;
 
     return (
       <div className="App flex-col" onClick={this.onClick}>
@@ -346,4 +311,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default storeListener('user', 'users', 'room', 'messages', 'shapes')(App);

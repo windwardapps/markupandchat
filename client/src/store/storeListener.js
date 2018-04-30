@@ -9,6 +9,7 @@ const storeListener = (...items) => (Component) =>
       super(props);
 
       this._items = items;
+      this._isMounted = true;
 
       const state = {};
       this._items.forEach((name) => {
@@ -20,6 +21,8 @@ const storeListener = (...items) => (Component) =>
     }
 
     componentWillUnmount() {
+      this._isMounted = false;
+      // console.log(`[componentWillUnmount() ${Component.displayName || Component.name}]`);
       this._items.forEach((name) => {
         store.removeListener(name, this.onChange);
       });
@@ -30,7 +33,10 @@ const storeListener = (...items) => (Component) =>
     };
 
     onChange = ({ name, data }) => {
-      this.setState({ [name]: data });
+      if (this._isMounted) {
+        // console.log(`[onChange() ${Component.displayName || Component.name}]`, name, data);
+        this.setState({ [name]: data });
+      }
     };
 
     render() {
