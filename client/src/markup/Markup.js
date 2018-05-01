@@ -3,9 +3,10 @@ import uuid from 'uuid/v4';
 import Toolbar from './Toolbar';
 import Svg from './Svg';
 import storeListener from '../store/storeListener';
+import store from '../store/store';
+import { PLACEHOLDER_TEXT } from '../svg/Text';
 
 import './Markup.css';
-import store from '../store/store';
 
 class Markup extends Component {
   onFileChange = (e) => {
@@ -41,6 +42,9 @@ class Markup extends Component {
       case 'rect':
         data = { ...baseData, x, y, width, height };
         break;
+      case 'text':
+        data = { ...baseData, x, y, width, height, fontSize: 25, text: PLACEHOLDER_TEXT };
+        break;
       case 'ellipse':
         data = {
           ...baseData,
@@ -59,13 +63,13 @@ class Markup extends Component {
   };
 
   render() {
-    const { room, shapes, user, users, onCreateShape, onUpdateShape, onDeleteShape } = this.props;
+    const { room, shapes, user, users, onUpdateShape, onDeleteShape } = this.props;
 
     return (
       <div className="Markup flex-row">
         {room.imageSrc ? (
           <div className="flex-row flex-main">
-            <Toolbar onCreateShape={this.onCreateShape} />
+            <Toolbar onCreateShape={this.onCreateShape} onUpdateShape={onUpdateShape} />
             <Svg ref={(ref) => (this._svgRef = ref)} onUpdateShape={onUpdateShape} onDeleteShape={onDeleteShape} />
           </div>
         ) : (

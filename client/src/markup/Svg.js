@@ -3,6 +3,7 @@ import _ from 'lodash';
 import Rect from '../svg/Rect';
 import Ellipse from '../svg/Ellipse';
 import Path, { scalePath } from '../svg/Path';
+import Text from '../svg/Text';
 import store from '../store/store';
 import renderMessage from '../chat/renderMessage';
 import storeListener from '../store/storeListener';
@@ -11,7 +12,8 @@ import './Svg.css';
 
 const shapeComponents = {
   rect: Rect,
-  ellipse: Ellipse
+  ellipse: Ellipse,
+  text: Text
 };
 
 const SCALEABLE_ATTRS = {

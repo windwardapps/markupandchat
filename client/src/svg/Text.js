@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import Draggable from './Draggable';
 import Resizable from './Resizable';
-import Authenticator from '../../protocol/Authenticator';
-import { isInRect } from '../../util/DOMUtil';
+import { isInRect } from '../util';
 
 import './Text.css';
 
@@ -30,9 +29,7 @@ const getShape = (props, rect) => {
   };
 };
 
-@Draggable(getRect, getShape)
-@Resizable(getRect, getShape)
-export default class Text extends React.Component {
+class Text extends React.Component {
   static propTypes = {
     data: PropTypes.object,
     isActive: PropTypes.bool,
@@ -64,9 +61,9 @@ export default class Text extends React.Component {
   }
 
   render() {
-    const { data, isActive, renderDragNode, renderResizeNodes } = this.props;
+    const { data, isActive, renderDragNode, renderResizeNodes, canEdit } = this.props;
 
-    const { x, y, width, stroke, fontSize, creator, font } = data;
+    const { x, y, width, stroke, fontSize, font } = data;
 
     if (this.state.isEditing) {
       const foProps = {
@@ -87,6 +84,7 @@ export default class Text extends React.Component {
           lineHeight: 'normal'
         },
         autoFocus: true,
+        onKeyDown: this.onKeyDown,
         onChange: this.onChange,
         onBlur: this.onBlur
       };
@@ -106,7 +104,7 @@ export default class Text extends React.Component {
       name: 'Text'
     };
 
-    if (creator === Authenticator.AUTH_DATA.username) {
+    if (canEdit) {
       additionalProps.className = 'selectable';
       additionalProps.onClick = this.onClick;
     }
@@ -212,6 +210,10 @@ export default class Text extends React.Component {
         }
       });
     });
+
+  onKeyDown = (e) => {
+    e.stopPropagation();
+  };
 }
 
 export function renderText(data, additionalProps = {}) {
@@ -258,3 +260,5 @@ const styles = {
     MozOsxFontSmoothing: 'grayscale'
   }
 };
+
+export default Draggable(getRect, getShape)(Resizable(getRect, getShape)(Text));

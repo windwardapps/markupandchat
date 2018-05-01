@@ -2,8 +2,17 @@
   background: #333;
   padding: 10px;
   flex: 0 0 100px; }
+  .Toolbar input {
+    width: 100%; }
+  .Toolbar .field label {
+    font-size: 11px;
+    color: #aaa;
+    display: block;
+    margin-bottom: 3px;
+    text-transform: uppercase; }
 
-.Toolbar button + button {
+.Toolbar button + button,
+.Toolbar .field {
   margin-top: 10px; }
 
 .Toolbar select {
