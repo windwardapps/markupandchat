@@ -3,10 +3,28 @@
   display: flex;
   color: #ccc;
   background: #005aa7; }
+  .Home .logo {
+    border: 1px solid #eee;
+    padding-right: 15px; }
   .Home > .content {
     padding: 40px; }
     .Home > .content h1 {
-      color: #eee; }
+      color: #eee;
+      display: flex;
+      align-items: center; }
+      .Home > .content h1 .draw {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        top: 3px; }
+      .Home > .content h1 .chat {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        top: 3px;
+        left: 7px; }
+      .Home > .content h1 .name {
+        margin-left: 40px; }
   .Home .form {
     background: #f2fcfe; }
   .Home h2 {

@@ -113,14 +113,15 @@ class App extends Component {
   };
 
   updateUser = async () => {
-    const { user, name } = this.props;
+    const { user, room } = this.props;
+    const { name } = this.state;
     if (!name.trim()) {
       return this.setState({ isEditing: false });
     }
 
     const res = await axios.put(`/api/users/${user.id}`, {
       name,
-      roomId: this.props.room.id
+      roomId: room.id
     });
 
     this.setState({ isEditing: false, name: '' });

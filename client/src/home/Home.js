@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import drawIcon from '../assets/draw.svg';
+import plusIcon from '../assets/plus.svg';
+import chatIcon from '../assets/chat.svg';
 
 import './Home.css';
 
@@ -14,7 +17,14 @@ class Home extends Component {
       <div className="Home">
         <div className="content flex-main">
           <div className="flex-main">
-            <h1>MarkupAndChat</h1>
+            <h1>
+              <div className="flex-row align-center logo">
+                <img className="draw" src={drawIcon} />
+                <img className="plus" src={plusIcon} />
+                <img className="chat" src={chatIcon} />
+              </div>
+              <span className="name">MarkupAndChat</span>
+            </h1>
             <h2>Free, private rooms to chat over images and mark them up</h2>
             <h3>Features and workflow:</h3>
             <p> Create a private room</p>

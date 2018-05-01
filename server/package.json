@@ -17,5 +17,11 @@
     "socket.io": "^2.1.0",
     "sqlite3": "^4.0.0",
     "uuid": "^3.2.1"
+  },
+  "prettier": {
+    "printWidth": 140,
+    "singleQuote": true,
+    "jsxBracketSameLine": true,
+    "arrowParens": "always"
   }
 }

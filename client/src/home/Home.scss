@@ -3,10 +3,32 @@
   display: flex;
   color: #ccc;
   background: #005aa7;
+  .logo {
+    border: 1px solid #eee;
+    padding-right: 15px;
+  }
   & > .content {
     padding: 40px;
     h1 {
       color: #eee;
+      display: flex;
+      align-items: center;
+      .draw {
+        width: 50px;
+        height: 50px;
+        position: relative;
+        top: 3px;
+      }
+      .chat {
+        width: 40px;
+        height: 40px;
+        position: relative;
+        top: 3px;
+        left: 7px;
+      }
+      .name {
+        margin-left: 40px;
+      }
     }
   }
   .form {
