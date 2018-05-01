@@ -77,7 +77,7 @@ exports.updateRoomUsers = async function updateRoomUsers(roomId) {
   const users = await User.findAll({
     where: {
       id: {
-        [Sequelize.Op.in]: roomUsers.map(ru => ru.userId)
+        [Sequelize.Op.in]: roomUsers.map((ru) => ru.userId)
       }
     }
   });
@@ -89,16 +89,17 @@ exports.createWebsocketServer = function createWebsocketServer(app) {
   const httpServer = http.Server(app);
   wsServer = io(httpServer);
 
-  wsServer.on('connection', socket => {
+  wsServer.on('connection', (socket) => {
     console.log('a user connected');
-    socket.on('joinroom', data => onJoinRoom(socket, data));
-    socket.on('chatmessage', data => onChatMessage(socket, data));
-    socket.on('createshape', data => onCreateShape(socket, data));
-    socket.on('updateshape', data => onUpdateShape(socket, data));
-    socket.on('deleteshape', data => onDeleteShape(socket, data));
+    socket.on('joinroom', (data) => onJoinRoom(socket, data));
+    socket.on('chatmessage', (data) => onChatMessage(socket, data));
+    socket.on('createshape', (data) => onCreateShape(socket, data));
+    socket.on('updateshape', (data) => onUpdateShape(socket, data));
+    socket.on('deleteshape', (data) => onDeleteShape(socket, data));
   });
 
-  httpServer.listen(3002, function() {
-    console.log('websocket server listening on *:3002');
+  const port = process.env.WS_PORT || 3002;
+  httpServer.listen(port, function() {
+    console.log(`websocket server listening on *:${port}`);
   });
 };
