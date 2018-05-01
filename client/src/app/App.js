@@ -38,8 +38,7 @@ class App extends Component {
     const { id } = this.props.match.params;
     const res = await axios.get(`/api/rooms/${id}`);
 
-    const { protocol, hostname } = window.location;
-    const socket = (this.socket = io(`${protocol}//${hostname}:3002`));
+    const socket = (this.socket = io(process.env.REACT_APP_WS_URL));
     socket.on('connect', () => {
       socket.emit('joinroom', { roomId: id, userId: res.data.user.id });
       socket.on('chatmessage', this.receiveNewMessage);
