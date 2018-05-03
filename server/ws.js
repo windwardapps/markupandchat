@@ -4,6 +4,7 @@ const uuid = require('uuid/v4');
 const Sequelize = require('sequelize');
 const Message = require('./models/Message');
 const User = require('./models/User');
+const Room = require('./models/Room');
 const RoomUser = require('./models/RoomUser');
 const Shape = require('./models/Shape');
 
@@ -61,6 +62,22 @@ async function onDeleteShape(socket, id) {
   wsServer.to(roomId).emit('deleteshape', id);
 }
 
+async function onUpdateRoom(socket) {
+  const roomId = socketRoomMap[socket.id];
+  const room = await Room.findById(roomId);
+
+  socket.to(roomId).emit('updateroom', room.get());
+}
+
+async function onEndSession(socket, data) {
+  const roomId = socketRoomMap[socket.id];
+  const room = await Room.findById(roomId);
+  room.endDate = new Date();
+  await room.save();
+
+  socket.to(roomId).emit('updateroom', room.get());
+}
+
 function emit(room, eventName, data) {
   wsServer.to(room).emit(eventName, data);
 }
@@ -96,6 +113,8 @@ exports.createWebsocketServer = function createWebsocketServer(app) {
     socket.on('createshape', (data) => onCreateShape(socket, data));
     socket.on('updateshape', (data) => onUpdateShape(socket, data));
     socket.on('deleteshape', (data) => onDeleteShape(socket, data));
+    socket.on('updateroom', () => onUpdateRoom(socket));
+    socket.on('endsession', (data) => onEndSession(socket, data));
   });
 
   const port = process.env.WS_PORT || 3002;

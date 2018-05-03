@@ -41,6 +41,7 @@ class App extends Component {
     const socket = (this.socket = io(process.env.REACT_APP_WS_URL));
     socket.on('connect', () => {
       socket.emit('joinroom', { roomId: id, userId: res.data.user.id });
+      socket.on('updateroom', this.receiveUpdatedRoom);
       socket.on('chatmessage', this.receiveNewMessage);
       socket.on('updateusers', this.receiveUsers);
       socket.on('createshape', this.receiveNewShape);
@@ -70,6 +71,10 @@ class App extends Component {
     if (this.state.showPicker && (e.code === 'Escape' || e.keyCode === 27 || e.which === 27)) {
       this.hidePicker();
     }
+  };
+
+  receiveUpdatedRoom = (room) => {
+    store.set('room', room);
   };
 
   receiveNewMessage = (message) => {
@@ -110,6 +115,7 @@ class App extends Component {
     formData.append('image', file);
     const res = await axios.put(`/api/rooms/${this.props.room.id}`, formData);
     store.set('room', res.data);
+    this.socket.emit('updateroom', {});
   };
 
   updateUser = async () => {
@@ -174,6 +180,8 @@ class App extends Component {
     this.setState({ dialogMessage: 'Saving... Please wait...' });
     store.set('scale', 1);
     store.set('activeShapeId', null);
+
+    this.socket.emit('endsession', { userId: this.props.user.id });
 
     // Convert room image to dataUrl
     setTimeout(() => {

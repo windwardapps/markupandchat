@@ -32,7 +32,7 @@ router.get('/:id', async (req, res, next) => {
       user,
       messages,
       shapes,
-      users: users.filter(u => !!roomUsers.find(ru => ru.userId === u.id))
+      users: users.filter((u) => !!roomUsers.find((ru) => ru.userId === u.id))
     });
   } catch (err) {
     return res.sendStatus(400);
@@ -59,7 +59,7 @@ router.put('/:id', async (req, res, next) => {
       const fileName = `${room.id}.${suffix}`;
       const path = `${__dirname}/../uploads/${fileName}`;
 
-      fs.rename(file.path, path, async err => {
+      fs.rename(file.path, path, async (err) => {
         if (err) {
           return res.status(500).send(err);
         }
@@ -107,13 +107,12 @@ router.post('/:id/result', async (req, res, next) => {
       const fileName = `${room.id}.result.png`;
       const path = `${__dirname}/../uploads/${fileName}`;
 
-      fs.rename(file.path, path, async err => {
+      fs.rename(file.path, path, async (err) => {
         if (err) {
           return res.status(500).send(err);
         }
 
         room.resultImageSrc = fileName;
-        room.endDate = new Date();
         await room.save();
         return res.json(room);
       });
