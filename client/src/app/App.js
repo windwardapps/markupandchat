@@ -219,7 +219,7 @@ class App extends Component {
           store.set('room', res.data);
 
           const iframe = document.createElement('iframe');
-          const hostname = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3001';
+          const hostname = process.env.NODE_ENV === 'production' ? `https://${window.location.host}` : 'http://localhost:3001';
           iframe.style.display = 'none';
           iframe.src = `${hostname}/api/rooms/${this.props.room.id}/result`;
           document.body.appendChild(iframe);
