@@ -1,6 +1,9 @@
 .Chat {
   flex: 0 0 350px;
   background: #f2fcfe;
+  .input-wrapper {
+    flex: 0 0 34px;
+  }
 }
 .Chat ul {
   list-style: none;

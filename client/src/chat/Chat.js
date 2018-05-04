@@ -46,7 +46,7 @@ class Chat extends Component {
         <ul ref={(node) => (this._list = node)} className="flex-main">
           {(messages.length ? messages : [defaultMessage]).map((m) => renderMessage(m, users))}
         </ul>
-        <div className="flex-row">
+        <div className="flex-row input-wrapper">
           <input
             className="flex-main"
             placeholder="Send a message..."

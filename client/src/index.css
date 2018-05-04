@@ -40,22 +40,15 @@ input {
   border-radius: 0;
   padding: 9px 12px;
   font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
-  font-size: 14px; }
-  @media (max-width: 950px) {
-    button,
-    input {
-      font-size: 16px; } }
+  font-size: 13px; }
 
 button {
   border: 1px solid #1c92d2;
   background: #1c92d2;
   color: #eee; }
   button.large {
-    padding: 12px 25px;
-    font-size: 16px; }
-    @media (max-width: 950px) {
-      button.large {
-        font-size: 18px; } }
+    font-size: 16px;
+    padding: 12px 25px; }
   button.link {
     color: #00b7ff;
     padding: 0;
@@ -89,11 +82,7 @@ input {
 select,
 option {
   font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
-  font-size: 14px; }
-  @media (max-width: 950px) {
-    select,
-    option {
-      font-size: 16px; } }
+  font-size: 13px; }
 
 select {
   appearance: none;
