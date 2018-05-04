@@ -6,6 +6,10 @@ body {
   margin: 0;
   padding: 0;
   font: 14px 'Lucida Grande', Helvetica, Arial, sans-serif; }
+  @media (max-width: 950px) {
+    html,
+    body {
+      font-size: 16px; } }
 
 a {
   color: #00b7ff; }
@@ -36,21 +40,27 @@ input {
   border-radius: 0;
   padding: 9px 12px;
   font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
-  font-size: 12px; }
+  font-size: 14px; }
+  @media (max-width: 950px) {
+    button,
+    input {
+      font-size: 16px; } }
 
 button {
   border: 1px solid #1c92d2;
   background: #1c92d2;
   color: #eee; }
   button.large {
-    font-size: 15px;
-    padding: 12px 25px; }
+    padding: 12px 25px;
+    font-size: 16px; }
+    @media (max-width: 950px) {
+      button.large {
+        font-size: 18px; } }
   button.link {
     color: #00b7ff;
     padding: 0;
     border: none;
     background: none;
-    font-size: 14px;
     margin-left: 3px;
     cursor: pointer; }
     button.link:hover {
@@ -79,7 +89,11 @@ input {
 select,
 option {
   font-family: 'Lucida Grande', Helvetica, Arial, sans-serif;
-  font-size: 12px; }
+  font-size: 14px; }
+  @media (max-width: 950px) {
+    select,
+    option {
+      font-size: 16px; } }
 
 select {
   appearance: none;
