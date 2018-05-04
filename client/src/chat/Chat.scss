@@ -3,6 +3,13 @@
   background: #f2fcfe;
   .input-wrapper {
     flex: 0 0 34px;
+    @media screen and (max-width: 950px) {
+      flex: 0 0 36px;
+      input,
+      button {
+        font-size: 14px;
+      }
+    }
   }
 }
 .Chat ul {
