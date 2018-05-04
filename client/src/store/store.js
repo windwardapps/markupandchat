@@ -9,7 +9,9 @@ class Store extends EventEmitter {
     user: {},
     room: {},
     activeShapeId: null,
-    scale: 1
+    scale: 1,
+    isEditingUsername: false,
+    showColorPicker: false
   };
 
   get(key) {

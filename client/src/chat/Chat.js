@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import renderMessage from './renderMessage';
+import storeListener from '../store/storeListener';
 
 import './Chat.css';
 
@@ -60,4 +61,4 @@ class Chat extends Component {
   }
 }
 
-export default Chat;
+export default storeListener('users', 'messages')(Chat);

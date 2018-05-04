@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Portal } from 'react-portal';
 import _ from 'lodash';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -8,10 +6,9 @@ import randomColor from 'randomcolor';
 import Chat from '../chat/Chat';
 import Markup from '../markup/Markup';
 import store from '../store/store';
-import { SketchPicker } from 'react-color';
 import Dialog from '../dialog/Dialog';
-import backArrow from '../assets/back-arrow.svg';
 import storeListener from '../store/storeListener';
+import Header from './Header';
 
 import './App.css';
 
@@ -33,8 +30,7 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    document.addEventListener('keydown', this.onKeyDown);
-
+    window.addEventListener('resize', this.onResize);
     const { id } = this.props.match.params;
     const res = await axios.get(`/api/rooms/${id}`);
 
@@ -57,19 +53,17 @@ class App extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('resize', this.onResize);
     this.socket.close();
   }
 
-  onClick = (e) => {
-    if (this.state.showPicker) {
-      this.hidePicker();
-    }
-  };
+  onResize = _.debounce(() => {
+    this.forceUpdate();
+  }, 400);
 
-  onKeyDown = (e) => {
-    if (this.state.showPicker && (e.code === 'Escape' || e.keyCode === 27 || e.which === 27)) {
-      this.hidePicker();
+  onClick = (e) => {
+    if (this.props.showColorPicker) {
+      store.set('showColorPicker', false);
     }
   };
 
@@ -118,11 +112,10 @@ class App extends Component {
     this.socket.emit('updateroom', {});
   };
 
-  updateUser = async () => {
+  updateUser = async (name) => {
     const { user, room } = this.props;
-    const { name } = this.state;
     if (!name.trim()) {
-      return this.setState({ isEditing: false });
+      return store.set('isEditingUsername', false);
     }
 
     const res = await axios.put(`/api/users/${user.id}`, {
@@ -130,7 +123,7 @@ class App extends Component {
       roomId: room.id
     });
 
-    this.setState({ isEditing: false, name: '' });
+    store.set('isEditingUsername', false);
     store.set('user', res.data);
   };
 
@@ -172,8 +165,10 @@ class App extends Component {
     });
   };
 
-  hidePicker = () => {
-    this.setState({ showPicker: false, pickerStyle: {} });
+  onCreateNewRoomClick = async () => {
+    const res = await axios.post('/api/rooms');
+    this.props.history.push(`/rooms/${res.data.id}`);
+    window.location.reload();
   };
 
   onDoneClick = () => {
@@ -253,57 +248,24 @@ class App extends Component {
 
     return (
       <div className="App flex-col" onClick={this.onClick}>
-        <header className="App-header flex-row align-center">
-          <div className="back">
-            <Link to="/">
-              <img src={backArrow} alt="Back" />
-            </Link>
-          </div>
-          <div className="logo">MarkupAndChat</div>
-          <div className="flex-main flex-row align-center">
-            <div className="username-wrapper">
-              <span>Your name: </span>
-              {isEditing ? (
-                <input
-                  value={name}
-                  onChange={(e) => this.setState({ name: e.target.value })}
-                  onKeyDown={(e) => {
-                    if (e.keyCode === 13) this.updateUser();
-                  }}
-                  onBlur={this.updateUser}
-                  autoFocus
-                />
-              ) : (
-                <span className="username" onClick={() => this.setState({ isEditing: true, name: user.name })}>
-                  {user.name}
-                </span>
-              )}
-            </div>
-            <div className="color-wrapper flex-row align-center">
-              <div>Your shape color: </div>
-              <div className="color" style={{ background: color }} onClick={this.onColorClick} />
-              <Portal isOpened={showPicker}>
-                <div style={pickerStyle} onClick={(e) => e.stopPropagation()}>
-                  {showPicker ? <SketchPicker color={color} onChangeComplete={this.onColorChange} /> : null}
-                </div>
-              </Portal>
-            </div>
-          </div>
-          <div className="right">
-            {room.imageSrc && !room.endDate ? (
-              <button className="done" onClick={this.onDoneClick}>
-                END SESSION
-              </button>
-            ) : null}
-          </div>
-        </header>
+        <Header
+          ref={(node) => (this._header = node)}
+          color={color}
+          onColorChange={this.onColorChange}
+          updateUser={this.updateUser}
+          onDoneClick={this.onDoneClick}
+          onCreateMessageClick={this.onCreateMessageClick}
+        />
         {room.endDate ? (
           <div className="flex-row flex-main align-center justify-center">
-            Thanks for using MarkupAndChat! Your session has ended. Feel free to create another room.
+            Thanks for using MarkupAndChat! Your session has ended. Feel free to
+            <button className="link" onClick={this.onCreateNewRoomClick}>
+              create another room
+            </button>.
           </div>
         ) : (
           <div className="flex-row flex-main">
-            <Chat messages={messages} users={users} onCreateMessageClick={this.onCreateMessageClick} />
+            {window.innerWidth > 950 ? <Chat onCreateMessageClick={this.onCreateMessageClick} /> : null}
             <Markup
               ref={(ref) => (this._markupRef = ref)}
               color={color}
@@ -320,4 +282,4 @@ class App extends Component {
   }
 }
 
-export default storeListener('user', 'users', 'room', 'messages', 'shapes')(App);
+export default storeListener('user', 'users', 'room', 'messages', 'shapes', 'showColorPicker')(App);

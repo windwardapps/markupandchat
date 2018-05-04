@@ -43,7 +43,9 @@ class Home extends Component {
           </footer>
         </div>
         <div className="flex-row align-center justify-center flex-main form">
-          <button onClick={this.onClick}>CREATE A ROOM</button>
+          <button className="large" onClick={this.onClick}>
+            CREATE A ROOM
+          </button>
         </div>
       </div>
     );

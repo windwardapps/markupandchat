@@ -41,8 +41,33 @@ input {
 button {
   border: 1px solid #1c92d2;
   background: #1c92d2;
-  color: #eee;
-  font-size: 14px; }
+  color: #eee; }
+  button.large {
+    font-size: 15px;
+    padding: 12px 25px; }
+  button.link {
+    color: #00b7ff;
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 14px;
+    margin-left: 3px;
+    cursor: pointer; }
+    button.link:hover {
+      text-decoration: underline; }
+    button.link:active {
+      color: #00a7ef;
+      background: none;
+      border: none; }
+  button.action {
+    padding: 0;
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px; }
   button:active {
     background: #005aa7;
     border: 1px solid #005aa7; }
@@ -72,3 +97,9 @@ select {
 *:focus {
   outline: none;
   border-color: #aaf; }
+
+@keyframes fade-in {
+  from {
+    opacity: 0; }
+  to {
+    opacity: 1; } }

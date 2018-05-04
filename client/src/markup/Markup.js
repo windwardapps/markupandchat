@@ -75,7 +75,9 @@ class Markup extends Component {
         ) : (
           <div className="flex-main flex-row align-center justify-center">
             <input ref={(node) => (this._fileInput = node)} type="file" onChange={this.onFileChange} />
-            <button onClick={this.onUploadImageClick}>UPLOAD A FILE TO GET STARTED</button>
+            <button className="large" onClick={this.onUploadImageClick}>
+              UPLOAD A FILE TO GET STARTED
+            </button>
           </div>
         )}
       </div>
