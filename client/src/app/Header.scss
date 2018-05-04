@@ -99,7 +99,8 @@
 }
 
 .ActionSheet_Header_Chat {
+  height: 100%;
   .Chat {
-    height: calc(100vh - 50px);
+    height: calc(100% - 50px);
   }
 }
