@@ -34,6 +34,13 @@ class Home extends Component {
             <p> Use the drawing tools to collaborate with your team</p>
             <p>Once you're finished, save the results to a file that contains the image with all markup and messages</p>
           </div>
+          <footer>
+            Part of the{' '}
+            <a href="https://windwardapps.com/blog/open-source" target="_blank">
+              Windward Apps OpenSource
+            </a>{' '}
+            initiative.
+          </footer>
         </div>
         <div className="flex-row align-center justify-center flex-main form">
           <button onClick={this.onClick}>CREATE A ROOM</button>

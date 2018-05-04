@@ -41,7 +41,8 @@ input {
 button {
   border: 1px solid #1c92d2;
   background: #1c92d2;
-  color: #eee; }
+  color: #eee;
+  font-size: 14px; }
   button:active {
     background: #005aa7;
     border: 1px solid #005aa7; }

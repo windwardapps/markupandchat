@@ -7,11 +7,14 @@
     border: 1px solid #eee;
     padding-right: 15px; }
   .Home > .content {
-    padding: 40px; }
+    padding: 40px 40px 80px;
+    position: relative; }
     .Home > .content h1 {
       color: #eee;
       display: flex;
-      align-items: center; }
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 30px; }
       .Home > .content h1 .draw {
         width: 50px;
         height: 50px;
@@ -25,14 +28,24 @@
         left: 7px; }
       .Home > .content h1 .name {
         margin-left: 40px; }
+      @media (max-width: 1000px) {
+        .Home > .content h1 {
+          font-size: 27px; } }
   .Home .form {
     background: #f2fcfe; }
   .Home h2 {
     font-weight: 400;
-    font-size: 17px; }
+    font-size: 20px; }
   .Home h3 {
-    margin-top: 50px; }
-  @media (max-width: 768px) {
+    margin-top: 50px;
+    font-size: 18px; }
+  .Home p {
+    font-size: 18px; }
+  .Home footer {
+    position: absolute;
+    bottom: 30px;
+    font-size: 13px; }
+  @media (max-width: 950px) {
     .Home {
       display: block; }
       .Home > .content {
@@ -41,4 +54,16 @@
           margin: 0;
           padding: 0; }
       .Home .form {
-        background: #0000; } }
+        background: #0000;
+        padding: 75px 0 200px; }
+      .Home footer {
+        bottom: -280px; } }
+  @media (max-width: 450px) {
+    .Home {
+      display: block; }
+      .Home > .content h1 {
+        flex-direction: column; }
+        .Home > .content h1 .name {
+          margin: 40px 0; }
+      .Home h2 {
+        text-align: center; } }

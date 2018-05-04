@@ -8,11 +8,14 @@
     padding-right: 15px;
   }
   & > .content {
-    padding: 40px;
+    padding: 40px 40px 80px;
+    position: relative;
     h1 {
       color: #eee;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      font-size: 30px;
       .draw {
         width: 50px;
         height: 50px;
@@ -29,6 +32,9 @@
       .name {
         margin-left: 40px;
       }
+      @media (max-width: 1000px) {
+        font-size: 27px;
+      }
     }
   }
   .form {
@@ -36,12 +42,21 @@
   }
   h2 {
     font-weight: 400;
-    font-size: 17px;
+    font-size: 20px;
   }
   h3 {
     margin-top: 50px;
+    font-size: 18px;
   }
-  @media (max-width: 768px) {
+  p {
+    font-size: 18px;
+  }
+  footer {
+    position: absolute;
+    bottom: 30px;
+    font-size: 13px;
+  }
+  @media (max-width: 950px) {
     display: block;
     & > .content {
       padding: 20px;
@@ -52,6 +67,24 @@
     }
     .form {
       background: #0000;
+      padding: 75px 0 200px;
+    }
+    footer {
+      bottom: -280px;
+    }
+  }
+  @media (max-width: 450px) {
+    display: block;
+    & > .content {
+      h1 {
+        flex-direction: column;
+        .name {
+          margin: 40px 0;
+        }
+      }
+    }
+    h2 {
+      text-align: center;
     }
   }
 }
