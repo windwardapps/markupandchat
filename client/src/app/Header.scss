@@ -68,7 +68,7 @@
 
 .ActionSheet_Header {
   padding: 20px;
-  & > * {
+  &>* {
     margin-bottom: 20px;
   }
   .color {
@@ -99,8 +99,8 @@
 }
 
 .ActionSheet_Header_Chat {
-  height: 100%;
+  height: calc(100% - 50px);
   .Chat {
-    height: calc(100% - 50px);
+    height: 100%;
   }
 }
