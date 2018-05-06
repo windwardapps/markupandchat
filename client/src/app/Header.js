@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { Portal } from 'react-portal';
 import store from '../store/store';
 import { SketchPicker } from 'react-color';
@@ -72,7 +73,9 @@ class Header extends Component {
       updateUser,
       onColorChange,
       onDoneClick,
-      onCreateMessageClick
+      onCreateMessageClick,
+      match,
+      history
     } = this.props;
     const { name, pickerStyle, showActionSheet, showChat } = this.state;
 
@@ -80,16 +83,16 @@ class Header extends Component {
       <header className="Header mobile flex-row align-center spc-between">
         <div className="logo">MarkupAndChat</div>
         <div className="flex-row align-center">
-          <button className="action chat" onClick={this.onToggleChatClick}>
+          <Link to={`${match.url}/chat`} className="action chat">
             <img src={chat} alt="action" />
-          </button>
-          <button className="action" onClick={this.onToggleActionSheetClick}>
+          </Link>
+          <Link to={`${match.url}/menu`} className="action" onClick={this.onToggleActionSheetClick}>
             <img src={ellipsis} alt="action" />
-          </button>
+          </Link>
         </div>
-        {showActionSheet ? (
+        <Route path={`${match.url}/menu`} render={() => (
           <Portal isOpen>
-            <ActionSheet onClose={this.onToggleActionSheetClick}>
+            <ActionSheet onClose={() => history.goBack()}>
               <div className="ActionSheet_Header" onClick={this.hidePicker}>
                 <div className="username-wrapper">
                   <span>Your name: </span>
@@ -124,16 +127,16 @@ class Header extends Component {
               </div>
             </ActionSheet>
           </Portal>
-        ) : null}
-        {showChat ? (
+        )} />
+        <Route path={`${match.url}/chat`} render={() => (
           <Portal isOpen>
-            <ActionSheet onClose={this.onToggleChatClick}>
+            <ActionSheet onClose={() => history.goBack()}>
               <div className="ActionSheet_Header_Chat">
                 <Chat onCreateMessageClick={onCreateMessageClick} />
               </div>
             </ActionSheet>
           </Portal>
-        ) : null}
+        )} />
       </header>
     );
   };
@@ -195,4 +198,4 @@ class Header extends Component {
   }
 }
 
-export default storeListener('user', 'room', 'isEditingUsername', 'showColorPicker')(Header);
+export default withRouter(storeListener('user', 'room', 'isEditingUsername', 'showColorPicker')(Header));

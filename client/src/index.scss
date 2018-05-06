@@ -74,20 +74,20 @@ button {
       border: none;
     }
   }
-  &.action {
-    padding: 0;
-    border: none;
-    background: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-  }
   &:active {
     background: #005aa7;
     border: 1px solid #005aa7;
   }
+}
+button.action, a.action {
+  padding: 0;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
 }
 input {
   border: 1px solid #eee;

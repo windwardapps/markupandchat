@@ -249,7 +249,6 @@ class App extends Component {
     return (
       <div className="App flex-col" onClick={this.onClick}>
         <Header
-          ref={(node) => (this._header = node)}
           color={color}
           onColorChange={this.onColorChange}
           updateUser={this.updateUser}
