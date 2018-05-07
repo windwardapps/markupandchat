@@ -94,6 +94,7 @@ const Draggable = (getRect, getShape) => (Component) =>
     };
 
     onDragStart = (e) => {
+      e.preventDefault();
       const [clientX, clientY] = getClientXY(e);
       if (!(clientX || clientY)) {
         return;
@@ -132,7 +133,7 @@ const Draggable = (getRect, getShape) => (Component) =>
       const { svgNode, onUpdateShape, onDragStop } = this.props;
       const [clientX, clientY] = getClientXY(e);
       if (!isInRect(svgNode.getBoundingClientRect(), clientX, clientY)) {
-        return this.cancelDragEvent();
+        // return this.cancelDragEvent();
       }
 
       this._dragEvent = null;

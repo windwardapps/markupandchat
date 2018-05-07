@@ -173,7 +173,7 @@ const Resizable = (getRect, getShape) => (Component) =>
       const { svgNode, onUpdateShape, onDragStop } = this.props;
       const [clientX, clientY] = getClientXY(e);
       if (!isInRect(svgNode.getBoundingClientRect(), clientX, clientY)) {
-        return this.cancelResizeEvent();
+        // return this.cancelResizeEvent();
       }
 
       this.removeListeners();

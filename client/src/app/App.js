@@ -243,8 +243,8 @@ class App extends Component {
   };
 
   render() {
-    const { room, user, users, messages } = this.props;
-    const { isEditing, name, color, showPicker, pickerStyle, dialogMessage } = this.state;
+    const { room } = this.props;
+    const { color, dialogMessage } = this.state;
 
     return (
       <div className="App flex-col" onClick={this.onClick}>
