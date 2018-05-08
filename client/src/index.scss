@@ -54,6 +54,11 @@ button {
   border: 1px solid #1c92d2;
   background: #1c92d2;
   color: #eee;
+  cursor: pointer;
+  &:disabled {
+    cursor: default;
+    opacity: 0.7;
+  }
   &.large {
     font-size: 16px;
     padding: 12px 25px;

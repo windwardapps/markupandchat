@@ -1,19 +1,24 @@
 .Toolbar {
   background: #333;
-  padding: 10px;
-  flex: 0 0 100px; }
+  padding: 0 10px;
+  flex: 0 0 60px; }
   .Toolbar input {
-    width: 100%; }
+    width: 75px; }
   .Toolbar .field label {
     font-size: 11px;
     color: #aaa;
     display: block;
     margin-bottom: 3px;
     text-transform: uppercase; }
+  .Toolbar button.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px; }
 
 .Toolbar button + button,
 .Toolbar .field {
-  margin-top: 10px; }
+  margin-left: 10px; }
 
 .Toolbar select {
-  margin-top: 10px; }
+  margin-left: 10px; }

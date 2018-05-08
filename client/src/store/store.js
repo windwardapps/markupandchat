@@ -11,7 +11,8 @@ class Store extends EventEmitter {
     activeShapeId: null,
     scale: 1,
     isEditingUsername: false,
-    showColorPicker: false
+    showColorPicker: false,
+    isUploading: false
   };
 
   get(key) {

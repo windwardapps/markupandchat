@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import storeListener from '../store/storeListener';
 import store from '../store/store';
+import rect from '../assets/rect.svg';
+import circle from '../assets/circle.svg';
 
 import './Toolbar.css';
 
@@ -87,9 +89,9 @@ class Toolbar extends Component {
     const { scale, initialScale, onCreateShape, activeShapeId } = this.props;
 
     return (
-      <div className="Toolbar flex-col">
-        <button onClick={() => onCreateShape('rect')}>RECT</button>
-        <button onClick={() => onCreateShape('ellipse')}>ELLIPSE</button>
+      <div className="Toolbar flex-row align-center justify-center">
+        <button className="icon" onClick={() => onCreateShape('rect')}><img src={rect} /></button>
+        <button className="icon" onClick={() => onCreateShape('ellipse')}><img src={circle} /></button>
         <button onClick={() => onCreateShape('text')}>TEXT</button>
         {/* <button onClick={() => onCreateShape('path')}>PATH</button> */}
         <select value={scale} onChange={this.onScaleChange}>

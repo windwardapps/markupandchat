@@ -23,16 +23,18 @@ class Markup extends Component {
   onCreateShape = (type) => {
     const scrollNode = document.querySelector('.scroll-node');
     const svgNode = document.querySelector('svg');
-    const { scale } = this.props;
-    const offset = 100;
-    const x = Math.round((scrollNode.scrollLeft + svgNode.clientWidth / 2 - offset) / scale);
-    const y = Math.round((scrollNode.scrollTop + svgNode.clientHeight / 2 - offset) / scale);
+    const { scale, color } = this.props;
+    const offset = 100 / scale;
+    const targetWidth = Math.min(scrollNode.clientWidth, svgNode.clientWidth);
+    const targetHeight = Math.min(scrollNode.clientHeight, svgNode.clientHeight);
+    const x = Math.round((scrollNode.scrollLeft + targetWidth / 2) / scale - offset);
+    const y = Math.round((scrollNode.scrollTop + targetHeight / 2) / scale - offset);
     const width = Math.round(2 * offset);
     const height = Math.round(2 * offset);
     const id = uuid();
 
     const baseData = {
-      stroke: this.props.color,
+      stroke: color,
       strokeWidth: 5,
       fill: 'none'
     };
@@ -50,8 +52,8 @@ class Markup extends Component {
           ...baseData,
           cx: x + width / 2,
           cy: y + height / 2,
-          rx: width,
-          ry: height
+          rx: width / 2,
+          ry: height / 2
         };
         break;
       default:
@@ -63,19 +65,19 @@ class Markup extends Component {
   };
 
   render() {
-    const { room, shapes, user, users, onUpdateShape, onDeleteShape } = this.props;
+    const { room, shapes, user, users, isUploading, onUpdateShape, onDeleteShape } = this.props;
 
     return (
       <div className="Markup flex-row">
         {room.imageSrc ? (
-          <div className="flex-row flex-main">
-            <Toolbar onCreateShape={this.onCreateShape} onUpdateShape={onUpdateShape} />
+          <div className="flex-col flex-main">
             <Svg ref={(ref) => (this._svgRef = ref)} onUpdateShape={onUpdateShape} onDeleteShape={onDeleteShape} />
+            <Toolbar onCreateShape={this.onCreateShape} onUpdateShape={onUpdateShape} />
           </div>
         ) : (
           <div className="flex-main flex-row align-center justify-center">
             <input ref={(node) => (this._fileInput = node)} type="file" onChange={this.onFileChange} />
-            <button className="large" onClick={this.onUploadImageClick}>
+            <button className="large" disabled={isUploading} onClick={this.onUploadImageClick}>
               UPLOAD A FILE TO GET STARTED
             </button>
           </div>
@@ -85,4 +87,4 @@ class Markup extends Component {
   }
 }
 
-export default storeListener('room', 'shapes', 'users', 'user', 'scale')(Markup);
+export default storeListener('room', 'shapes', 'users', 'user', 'scale', 'isUploading')(Markup);

@@ -105,6 +105,7 @@ class App extends Component {
   };
 
   onUploadImageClick = async (file) => {
+    store.set('isUploading', true);
     const formData = new FormData();
     formData.append('image', file);
     const res = await axios.put(`/api/rooms/${this.props.room.id}`, formData);

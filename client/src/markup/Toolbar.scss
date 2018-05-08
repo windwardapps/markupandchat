@@ -1,9 +1,9 @@
 .Toolbar {
   background: #333;
-  padding: 10px;
-  flex: 0 0 100px;
+  padding: 0 10px;
+  flex: 0 0 60px;
   input {
-    width: 100%;
+    width: 75px;
   }
   .field {
     label {
@@ -14,11 +14,19 @@
       text-transform: uppercase;
     }
   }
+  button {
+    &.icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+    }
+  }
 }
 .Toolbar button + button,
 .Toolbar .field {
-  margin-top: 10px;
+  margin-left: 10px;
 }
 .Toolbar select {
-  margin-top: 10px;
+  margin-left: 10px;
 }
