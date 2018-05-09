@@ -1,5 +1,9 @@
 .App {
   height: 100vh; }
+  .App .thanks {
+    padding: 0 20px; }
+    .App .thanks button {
+      margin-top: 20px; }
 
 .App .username-wrapper {
   margin-left: 35px; }

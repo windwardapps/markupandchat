@@ -68,7 +68,6 @@ button {
     padding: 0;
     border: none;
     background: none;
-    margin-left: 3px;
     cursor: pointer;
     &:hover {
       text-decoration: underline;
@@ -77,6 +76,9 @@ button {
       color: #00a7ef;
       background: none;
       border: none;
+    }
+    @media (max-width: 950px) {
+      font-size: 16px;
     }
   }
   &:active {

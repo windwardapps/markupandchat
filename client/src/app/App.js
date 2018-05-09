@@ -222,11 +222,7 @@ class App extends Component {
 
           store.set('room', res.data);
 
-          const iframe = document.createElement('iframe');
-          const hostname = process.env.NODE_ENV === 'production' ? `https://${window.location.host}` : 'http://localhost:3001';
-          iframe.style.display = 'none';
-          iframe.src = `${hostname}/api/rooms/${this.props.room.id}/result`;
-          document.body.appendChild(iframe);
+          this.onDownloadClick();
 
           setTimeout(() => this.setState({ dialogMessage: 'Your download is complete' }), 500);
           setTimeout(() => this.setState({ dialogMessage: null }), 1500);
@@ -241,6 +237,14 @@ class App extends Component {
 
       img.src = 'data:image/svg+xml,' + encodedSvgString;
     }, 3000);
+  };
+
+  onDownloadClick = () => {
+    const iframe = document.createElement('iframe');
+    const hostname = process.env.NODE_ENV === 'production' ? `https://${window.location.host}` : 'http://localhost:3001';
+    iframe.style.display = 'none';
+    iframe.src = `${hostname}/api/rooms/${this.props.room.id}/result`;
+    document.body.appendChild(iframe);
   };
 
   render() {
@@ -258,10 +262,15 @@ class App extends Component {
         />
         {room.endDate ? (
           <div className="flex-row flex-main align-center justify-center">
-            Thanks for using MarkupAndChat! Your session has ended. Feel free to
-            <button className="link" onClick={this.onCreateNewRoomClick}>
-              create another room
-            </button>.
+            <div className="thanks">
+              <div>Thanks for using MarkupAndChat! Your session has ended.</div>
+              <button className="link" onClick={this.onDownloadClick}>
+                Download results again
+              </button>
+              <button className="link" onClick={this.onCreateNewRoomClick}>
+                Create another room
+              </button>
+            </div>
           </div>
         ) : (
           <div className="flex-row flex-main">
