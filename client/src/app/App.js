@@ -264,12 +264,16 @@ class App extends Component {
           <div className="flex-row flex-main align-center justify-center">
             <div className="thanks">
               <div>Thanks for using MarkupAndChat! Your session has ended.</div>
-              <button className="link" onClick={this.onDownloadClick}>
-                Download results again
-              </button>
-              <button className="link" onClick={this.onCreateNewRoomClick}>
-                Create another room
-              </button>
+              <div className="btn-wrapper">
+                <button className="link" onClick={this.onDownloadClick}>
+                  Download results again
+                </button>
+              </div>
+              <div className="btn-wrapper">
+                <button className="link" onClick={this.onCreateNewRoomClick}>
+                  Create another room
+                </button>
+              </div>
             </div>
           </div>
         ) : (
