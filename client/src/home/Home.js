@@ -36,7 +36,7 @@ class Home extends Component {
           </div>
           <footer>
             Part of the{' '}
-            <a href="https://windwardapps.com/blog/open-source" target="_blank">
+            <a href="https://windwardapps.com/news/open-source" target="_blank">
               Windward Apps OpenSource
             </a>{' '}
             initiative.
